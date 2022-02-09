@@ -14,25 +14,25 @@ import {
 	VStack,
 	Heading
 } from "@chakra-ui/react"
-import FlagImage from "../../assets/shopify/images/flag.svg";
+// import FlagImage from "../../assets/shopify/images/flag.svg";
 
 export default function Authorize() {
 	const [storeDomain, setStoreDomain] = useState(''); 
-    const [isShopifySiteURLInvalid, setIsShopifySiteURLInvalid] = useState(false);
+  const [isShopifySiteURLInvalid, setIsShopifySiteURLInvalid] = useState(false);
 
     const onAuthorize = () => {
-        if (!storeDomain) {
+      if (!storeDomain) {
 			setIsShopifySiteURLInvalid(true);
 			return false;
 		}
-        window.location.href=`${process.env.REACT_APP_SERVER_URL}/shopify?shop=${storeDomain}`
+      window.location.href=`${process.env.REACT_APP_SERVER_URL}/shopify?shop=${storeDomain}`
     }
 	return (
 		<Box marginTop="24">
 			<VStack>
 				<Box boxSize="lg">
 					<VStack spacing="3">
-						<Image boxSize="200px" src={FlagImage}/>
+						{/* <Image boxSize="200px" src={FlagImage}/> */}
 						<Heading as="h1" size="md">Shopify Store Authentication</Heading>
 						<Text>The access data to your Shopify site has expired.</Text>
 					</VStack>

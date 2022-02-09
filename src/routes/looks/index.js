@@ -14,13 +14,15 @@ import {
   Container,
   VStack,
 	useToast,
-	Skeleton
+	Skeleton,
+	Alert,
+	AlertIcon,
 } from '@chakra-ui/react';
 import { DateTime } from "luxon";
 import Carousel from "../../components/carousel";
 import {
 	IoCaretForwardOutline,
-	IoStopCircleOutline,
+	IoHandLeftSharp,
 	IoEye,
 	IoCartSharp,
 	IoLogoUsd
@@ -53,14 +55,23 @@ const renderSkeleton = (looks) => {
 
 const renderLookPoints = ({ look }) => {
 	return (
-		<SimpleGrid columns={1} spacing={5} marginTop="5">
+		<SimpleGrid columns={2} spacing={5} marginTop="5">
 			<HStack align={'top'}>
 				<Box color={'green.400'} px={2}>
 					<Icon as={IoEye} />
 				</Box>
 				<VStack align={'start'}>
-					<Text fontWeight={600}>12,200 views</Text>
-					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Total number of views</Text>
+					<Text fontWeight={600}>Views</Text>
+					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Total views</Text>
+				</VStack>
+			</HStack>
+			<HStack align={'top'}>
+				<Box color={'green.400'} px={2}>
+					<Icon as={IoHandLeftSharp} />
+				</Box>
+				<VStack align={'start'}>
+					<Text fontWeight={600}>Clicks</Text>
+					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Total clicks</Text>
 				</VStack>
 			</HStack>
 			<HStack align={'top'}>
@@ -68,8 +79,8 @@ const renderLookPoints = ({ look }) => {
 					<Icon as={IoCartSharp} />
 				</Box>
 				<VStack align={'start'}>
-					<Text fontWeight={600}>$3000 add to cart</Text>
-					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Total cart adds from looks</Text>
+					<Text fontWeight={600}>Add to cart</Text>
+					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Cart revenue</Text>
 				</VStack>
 			</HStack>
 			<HStack align={'top'}>
@@ -77,8 +88,8 @@ const renderLookPoints = ({ look }) => {
 					<Icon as={IoLogoUsd} />
 				</Box>
 				<VStack align={'start'}>
-					<Text fontWeight={600}>10% conversion</Text>
-					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Revenue of conversion</Text>
+					<Text fontWeight={600}>Conversion</Text>
+					<Text color={'gray.600'} marginTop="0" style={{ marginTop: 0 }}>Total revenue</Text>
 				</VStack>
 			</HStack>
 	</SimpleGrid>
@@ -143,7 +154,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 		);
 	} else if (looks.get.success.data.length) {
 		return looks.get.success.data.map(look => (
-			<Box>
+			<Box key={look.id}>
 				<Box
 					marginTop={{ base: '1', sm: '5' }}
 					marginBottom={{ base: '1', sm: '5' }}
@@ -171,7 +182,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 						{renderLookPoints({ look })}
 						<Stack direction='row' spacing={4} marginTop="5">
 							<Link to={`looks/${look.id}`}>
-								<Button leftIcon={<IoCaretForwardOutline />} variant='solid'>
+								<Button colorScheme="blue" isFullWidth leftIcon={<IoCaretForwardOutline />} variant='solid'>
 									View
 								</Button>
 							</Link>
@@ -181,6 +192,24 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 				<Divider marginTop="1em" marginBottom="1em"/>
 			</Box>
 		))
+	} else if (!looks.get.success.data.length) {
+		return (
+			<Box>
+				<Flex direction="column" align="center">
+					<VStack spacing="3">
+						<Heading as="h1" size="md">You have not created any looks yet.</Heading>
+					</VStack>
+					<br />
+					<Divider />
+					<br />
+					<VStack spacing="3">
+						<Link to="/looks/create">
+							<Button>Create Look</Button>	
+						</Link>
+					</VStack>
+				</Flex>
+			</Box>
+		)
 	}
 	return null;
 }
@@ -199,6 +228,11 @@ function Looks(props) {
     
     return (
 			<Container maxW={'7xl'} p="12">
+				<Alert status='info'>
+					<AlertIcon />
+					To enable or disable "Shop the look" widget on your store, please visit the &nbsp;<Link to="/settings" style={{ textDecoration: 'underline'}}><b>Settings page</b></Link>.
+				</Alert>
+				<br />
 				{renderLooks({ looks, orangeColorMode, getLooks })}
     </Container>
   );

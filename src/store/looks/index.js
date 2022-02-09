@@ -53,7 +53,7 @@ const INITIAL_LOOKS_STATE = {
 
 const useLooksStore = create((set, get) => ({
 	looks: INITIAL_LOOKS_STATE,
-	getLooks: async({ id = '' } = {}) => {
+	getLooks: async({ id = '', shop = window.lookbook.shop } = {}) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -68,7 +68,23 @@ const useLooksStore = create((set, get) => ({
 		try {
 			const Looks = Parse.Object.extend('Looks');
 			const looksQuery = new Parse.Query(Looks);
+			looksQuery.equalTo('shop', shop);
+			const fud = id ? looksQuery.equalTo('objectId', id) : null;
 			const data = id ? await looksQuery.first() :  await looksQuery.find();
+			console.log(data);
+
+			if (id && data.get('products').length) {
+				const { data: products } = await Parse.Cloud.run('get_products', {
+					shop: shop,
+					ids: data.get('products').map(p => {
+						if (typeof p === "string") {
+							return p.split('/')?.pop()
+						}
+						return undefined
+					}).filter(Boolean)
+				});
+				data.set('products', products);
+			}
 			set(produce(state => ({
 				...state,
 				looks: {
@@ -101,7 +117,7 @@ const useLooksStore = create((set, get) => ({
 			})))
 		}
 	},
-	postLooks: async ({ id, name, medias, products = [] }) => {
+	postLooks: async ({ id, shop = window.lookbook.shop, name, medias, products = [] }) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -119,6 +135,7 @@ const useLooksStore = create((set, get) => ({
 			looks.set('name', name);
 			looks.set('medias', medias);
 			looks.set('products', products);
+			looks.set('shop', shop);
 			const data = await looks.save();
 
 			set(produce(state => ({
@@ -153,7 +170,7 @@ const useLooksStore = create((set, get) => ({
 			throw e;
 		}
 	},
-	patchLooks: async ({ id, name, medias, products = [] }) => {
+	patchLooks: async ({ id, shop = window.lookbook.shop, name, medias, products = [] }) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -164,7 +181,6 @@ const useLooksStore = create((set, get) => ({
 				}
 			}
 		})))
-		console.log(products)
 		try {
 			const Looks = Parse.Object.extend('Looks');
 			const looks = new Looks();
@@ -172,6 +188,7 @@ const useLooksStore = create((set, get) => ({
 			looks.set('name', name);
 			looks.set('medias', medias);
 			looks.set('products', products);
+			looks.set('shop', shop);
 			const data = await looks.save();
 
 			set(produce(state => ({
@@ -219,13 +236,10 @@ const useLooksStore = create((set, get) => ({
 		})))
 
 		try {
-			const { data } = await axios.delete(`https://api.thinkific.com/api/public/v1/site_scripts/${id}`,{
-				headers: {
-					Authorization: `Bearer ${window.localStorage.getItem('thinkificAccessToken')}`,
-					accept: '*/*',
-					'Access-Control-Allow-Origin': '*',
-				}
-			});
+			const Looks = Parse.Object.extend('Looks');
+			const looks = new Looks();
+			looks.id = id;
+			const data = await looks.destroy();
 
 			set(produce(state => ({
 				...state,

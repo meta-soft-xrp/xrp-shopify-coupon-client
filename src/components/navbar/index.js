@@ -87,7 +87,7 @@ import {
         </Flex>
   
         <Collapse in={isOpen} animateOpacity>
-          {/* <MobileNav /> */}
+          <MobileNav />
         </Collapse>
       </Box>
     );
@@ -195,7 +195,7 @@ import {
         <Flex
           py={2}
           as={Link}
-          href={href ?? '#'}
+          to={href ?? '#'}
           justify={'space-between'}
           align={'center'}
           _hover={{
@@ -274,10 +274,6 @@ import {
     },
     {
         label: 'Settings',
-        href: '#',
-    },
-    {
-      label: 'Help',
-      href: '/help',
+        href: '/settings',
     },
   ];

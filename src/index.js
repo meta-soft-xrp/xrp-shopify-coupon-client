@@ -9,19 +9,24 @@ import './index.css';
 import {Provider} from '@shopify/app-bridge-react';
 import { parseQuery } from "./utils/url";
 import AppRoutes from "./routes"
-
+import { ShopContext } from "./context";
 
 Parse.initialize(process.env.REACT_APP_API_SHOPLOOKS_PARSE_APP_ID, process.env.REACT_APP_API_SHOPLOOKS_PARSE_JSKEY);
 Parse.serverURL = process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL + '/parse';
 Parse.enableLocalDatastore();
+console.log("HEELLOW WO W ")
+console.log(parseQuery(window.location.search))
 
-const { host } = parseQuery(window.location.search);
+const { host, shop = '' } = parseQuery(window.location.search);
+console.log("SHOP IS ")
 if (!host) {
   ReactDOM.render(
     <React.StrictMode>
         <ChakraProvider>
           <BrowserRouter>
-            <AppRoutes />
+            <ShopContext.Provider value={shop}>
+              <AppRoutes />
+            </ShopContext.Provider>
           </BrowserRouter>
         </ChakraProvider>
     </React.StrictMode>,
@@ -34,7 +39,9 @@ if (!host) {
         <ChakraProvider>
           <BrowserRouter>
             <Provider config={{ apiKey: 'f8afe3da5a559e7182f340bf08aeec31', host: host,  forceRedirect: true }}>
-              <AppRoutes />
+              <ShopContext.Provider value={shop}>
+                <AppRoutes />
+              </ShopContext.Provider>
             </Provider>
           </BrowserRouter>
         </ChakraProvider>

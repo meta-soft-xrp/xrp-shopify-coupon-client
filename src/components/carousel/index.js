@@ -42,8 +42,8 @@ export default function CaptionCarousel(props) {
   return (
     <Box
       position={'relative'}
-      height={'400px'}
-      width={'400px'}
+      height={props.height || '400px'}
+      width={props.width || '400px'}
       overflow={'hidden'}
       borderWidth="1px"
 			rounded="lg"
@@ -57,7 +57,7 @@ export default function CaptionCarousel(props) {
         position="absolute"
         left={side}
         top={top}
-        transform={'translate(0%, -50%)'}
+        transform={'translate(-50%, -50%)'}
         zIndex={2}
         onClick={() => slider?.slickPrev()}>
         <BiLeftArrowAlt size="40px" />
@@ -69,7 +69,7 @@ export default function CaptionCarousel(props) {
         position="absolute"
         right={side}
         top={top}
-        transform={'translate(0%, -50%)'}
+        transform={'translate(50%, -50%)'}
         zIndex={2}
         onClick={() => slider?.slickNext()}>
         <BiRightArrowAlt size="40px" />
@@ -84,9 +84,9 @@ export default function CaptionCarousel(props) {
             backgroundPosition="center"
             backgroundRepeat="no-repeat"
             backgroundSize="cover"
-            backgroundImage={`url(${media.url()})`}>
+            backgroundImage={`url(${media.url ? media.url() : media.src})`}>
             {/* This is the block you need to change, to customize the caption */}
-            <Container padding="0" size="container.lg" height="400px" position="relative">
+            <Container padding="0" size="container.lg" height={props.height || '400px'} position="relative">
               <Stack
                 padding="0"
                 w={'full'}

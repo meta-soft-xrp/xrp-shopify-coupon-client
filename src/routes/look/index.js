@@ -110,6 +110,15 @@ function CreateLooks(props) {
 					...uploads,
 					...data?.get('medias'), 
 				])
+				
+				setProducts([
+					...products,
+					...data?.get('products').map(p => ({
+						id: p.admin_graphql_api_id,
+						title: p.title,
+						image: p.image.src
+					}))
+				])
 			}
 		}
 	}
