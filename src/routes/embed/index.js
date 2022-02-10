@@ -26,11 +26,10 @@ import {
 } from '@chakra-ui/react';
 import Carousel from "../../components/carousel";
 import useLooksStore from "../../store/looks"
-import { parseQuery } from "../../utils/url";
 import useProductsStore from "../../store/products";
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { ShopContext } from "../../context";
-
+import "../../embed.css"
 
 const ProductsModal = (props) => {
 	const { isOpen, onClose, productIds = [], lookId } = props;
@@ -70,55 +69,62 @@ const ProductsModal = (props) => {
 				</Box>
 			)
 		} else if (products.get.success.data.length) {
-			return products.get.success.data.map(product => (
-				<Center py={8} key={product.admin_graphql_api_id || product.id}>
-					<Box
-						role={'group'}
-						p={4}
-						maxW={'330px'}
-						w={'full'}
-						boxShadow={'2xl'}
-						rounded={'lg'}
-						pos={'relative'}
-						zIndex={1}>
-						<Box
-							rounded={'lg'}
-							mt={-12}
-							pos={'relative'}
-							height={'260px'}
-							_groupHover={{
-								_after: {
-									filter: 'blur(20px)',
-								},
-							}}>
-							<Carousel medias={product.images} height={260} width={282} />
-						</Box>
-						<Stack pt={3} align={'center'}>
-							<Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-								{product.variants && product.variants.length ? `${product.variants.length} variants available` : null }
-							</Text>
-							<Heading textAlign="center" fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-								{product.title}
-							</Heading>
-							<Link
-								marginTop={"10px"}
-								href={`http://${shop}/products/${product.handle}?app=shoplook&lookid=${lookId}`}
-								target="_blank"
-								width="full"
-								>
-								<Button isFullWidth rightIcon={<ExternalLinkIcon />}>View Product</Button>
-								</Link>
-						</Stack>
-					</Box>
-				</Center>
-			))
+			return (
+				<SimpleGrid  minChildWidth='330px' spacing='10px'>
+					{
+						products.get.success.data.map(product => (
+							<Center py={8} key={product.admin_graphql_api_id || product.id}>
+								<Box
+									role={'group'}
+									p={4}
+									maxW={'330px'}
+									w={'full'}
+									boxShadow={'2xl'}
+									rounded={'lg'}
+									pos={'relative'}
+									zIndex={1}>
+									<Box
+										rounded={'lg'}
+										mt={-12}
+										pos={'relative'}
+										height={'260px'}
+										_groupHover={{
+											_after: {
+												filter: 'blur(20px)',
+											},
+										}}>
+										<Carousel medias={product.images} height={260} width={282} />
+									</Box>
+									<Stack pt={3} align={'center'}>
+										<Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
+											{product.variants && product.variants.length ? `${product.variants.length} variants available` : null }
+										</Text>
+										<Heading textAlign="center" fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
+											{product.title}
+										</Heading>
+										<Link
+											marginTop={"10px"}
+											href={`http://${shop}/products/${product.handle}?app=shoplook&lookid=${lookId}`}
+											target="_blank"
+											width="full"
+											>
+											<Button isFullWidth rightIcon={<ExternalLinkIcon />}>View Product</Button>
+											</Link>
+									</Stack>
+								</Box>
+							</Center>
+						))
+					}
+				</SimpleGrid>
+			);
+		
 		} else {
 			return null;
 		}
 	}
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} size={useBreakpointValue({ base: 'xl', md: 'full' })}>
+      <Modal  blockScrollOnMount={false} preserveScrollBarGap lockFocusAcrossFrames={false} isOpen={isOpen} onClose={onClose} size={useBreakpointValue({ base: 'xl', md: 'full' })}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Shop the look</ModalHeader>

@@ -78,6 +78,7 @@ const SettingsRoute = () => {
 					</Heading>
 					<Text mt="4" fontSize="lg">
 						Enable or disable "Shop the look" widget on your store. The widget gets appended to the bottom of your store page above the
+						footer.
 					</Text>
 					<ButtonGroup mt="8" variant='outline' spacing='6'>
 						<Button isLoading={scripts.post.loading} fontWeight="bold" size="lg" colorScheme='blue' onClick={enableWidget}>Enable Widget Embed</Button>
