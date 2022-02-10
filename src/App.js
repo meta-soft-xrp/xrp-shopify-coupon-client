@@ -14,23 +14,35 @@ import Authorize from "./routes/shopify/Authorize";
 
 function App() {
   const [shopifySessionAvailable, setShopifySessionAvailable] = useState(false);
+  const [shopifyHmacAvailable, setShopifyHmacAvailable] = useState(false);
+  const [shopifyCodeAvailable, setShopifyCodeAvailable] = useState(false);
+
   const [isEmbed, setIsEmbed] = useState(false);
   useEffect(() => {
     const { code, session, hmac, embed, shop = '' } = parseQuery(window.location.search);
     window.lookbook = (parseQuery(window.location.search));
     if (session) {
       setShopifySessionAvailable(true);
+      setShopifyHmacAvailable(false);
+      shopifyCodeAvailable(false);
     } else if (code) {
       setShopifySessionAvailable(false);
+      setShopifyHmacAvailable(false);
+      shopifyCodeAvailable(true);
       window.location.replace(`${process.env.REACT_APP_SERVER_URL}/shopify/callback${document.location.search}`)
     } else if (hmac){
       setShopifySessionAvailable(false);
+      setShopifyHmacAvailable(true);
+      shopifyCodeAvailable(false)
       window.location.replace(`${process.env.REACT_APP_SERVER_URL}/shopify${document.location.search}`)
     } else if (embed) {
       setIsEmbed(true);
+      setShopifySessionAvailable(false);
+      setShopifyHmacAvailable(false);
+      shopifyCodeAvailable(false)
     }
   }, []);
-
+  
   if (shopifySessionAvailable) {
     return (
       <>
@@ -40,30 +52,28 @@ function App() {
     );
   } else if (isEmbed) {
     return <Navigate to="/embed" replace />
-  } 
-  // else if (code || hmac) {
-  //   return (	
-  //     <Flex alignItems="flex-start" flexDirection="row">
-  //       <Skeleton> 
-  //         <Box></Box>
-  //       </Skeleton>
-  //       <Flex direction="column" width="90%" marginLeft="5">
-  //         <Skeleton width="100%" height="40px"> 
-  //       </Skeleton>
-  //       <br />
-  //       <Skeleton width="100%" height="20px"> 
-  //       </Skeleton>
-  //       <br />
-  //       <Skeleton width="100%" height="20px"> 
-  //       </Skeleton>
-  //       <br />
-  //       <Skeleton width="100%" height="20px"> 
-  //       </Skeleton>
-  //       </Flex>
-  //     </Flex>
-  //   )
-  // } 
-  else {
+  } else if (shopifyHmacAvailable || shopifyCodeAvailable) {
+    return (	
+      <Flex alignItems="flex-start" flexDirection="row">
+        <Skeleton> 
+          <Box></Box>
+        </Skeleton>
+        <Flex direction="column" width="90%" marginLeft="5">
+          <Skeleton width="100%" height="40px"> 
+        </Skeleton>
+        <br />
+        <Skeleton width="100%" height="20px"> 
+        </Skeleton>
+        <br />
+        <Skeleton width="100%" height="20px"> 
+        </Skeleton>
+        <br />
+        <Skeleton width="100%" height="20px"> 
+        </Skeleton>
+        </Flex>
+      </Flex>
+    )
+  } else {
     return <Authorize />
   }
 }
