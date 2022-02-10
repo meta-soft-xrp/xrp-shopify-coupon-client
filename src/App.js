@@ -24,22 +24,22 @@ function App() {
     if (session) {
       setShopifySessionAvailable(true);
       setShopifyHmacAvailable(false);
-      shopifyCodeAvailable(false);
+      setShopifyCodeAvailable(false);
     } else if (code) {
       setShopifySessionAvailable(false);
       setShopifyHmacAvailable(false);
-      shopifyCodeAvailable(true);
+      setShopifyCodeAvailable(true);
       window.location.replace(`${process.env.REACT_APP_SERVER_URL}/shopify/callback${document.location.search}`)
     } else if (hmac){
       setShopifySessionAvailable(false);
       setShopifyHmacAvailable(true);
-      shopifyCodeAvailable(false)
+      setShopifyCodeAvailable(false)
       window.location.replace(`${process.env.REACT_APP_SERVER_URL}/shopify${document.location.search}`)
     } else if (embed) {
       setIsEmbed(true);
       setShopifySessionAvailable(false);
       setShopifyHmacAvailable(false);
-      shopifyCodeAvailable(false)
+      setShopifyCodeAvailable(false)
     }
   }, []);
   
