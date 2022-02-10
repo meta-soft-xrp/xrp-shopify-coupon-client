@@ -40,29 +40,29 @@ function App() {
     );
   } else if (isEmbed) {
     return <Navigate to="/embed" replace />
-  } else {
-    // none of the state matches so authorize redirect
-    return (
-      // <Flex alignItems="flex-start" flexDirection="row">
-      //   <Skeleton> 
-      //     <Box></Box>
-      //   </Skeleton>
-      //   <Flex direction="column" width="90%" marginLeft="5">
-      //     <Skeleton width="100%" height="40px"> 
-      //   </Skeleton>
-      //   <br />
-      //   <Skeleton width="100%" height="20px"> 
-      //   </Skeleton>
-      //   <br />
-      //   <Skeleton width="100%" height="20px"> 
-      //   </Skeleton>
-      //   <br />
-      //   <Skeleton width="100%" height="20px"> 
-      //   </Skeleton>
-      //   </Flex>
-      // </Flex>	
-      <Authorize />
+  } else if (code || hmac) {
+    return (	
+      <Flex alignItems="flex-start" flexDirection="row">
+        <Skeleton> 
+          <Box></Box>
+        </Skeleton>
+        <Flex direction="column" width="90%" marginLeft="5">
+          <Skeleton width="100%" height="40px"> 
+        </Skeleton>
+        <br />
+        <Skeleton width="100%" height="20px"> 
+        </Skeleton>
+        <br />
+        <Skeleton width="100%" height="20px"> 
+        </Skeleton>
+        <br />
+        <Skeleton width="100%" height="20px"> 
+        </Skeleton>
+        </Flex>
+      </Flex>
     )
+  } else {
+    return <Authorize />
   }
 }
 
