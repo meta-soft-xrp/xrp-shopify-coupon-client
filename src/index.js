@@ -38,7 +38,7 @@ if (!host) {
     <React.StrictMode>
         <ChakraProvider>
           <BrowserRouter>
-            <Provider config={{ apiKey: 'f8afe3da5a559e7182f340bf08aeec31', host: host,  forceRedirect: true }}>
+            <Provider config={{ apiKey: process.env.REACT_APP_SHOPIFY_API_KEY, host: host,  forceRedirect: true }}>
               <ShopContext.Provider value={shop}>
                 <AppRoutes />
               </ShopContext.Provider>
