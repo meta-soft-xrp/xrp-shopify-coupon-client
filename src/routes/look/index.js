@@ -315,11 +315,7 @@ function CreateLooks(props) {
 									<FormLabel>Add products for this look</FormLabel>
 									<Stack
 										spacing={4}
-										divider={
-										<StackDivider
-												borderColor={colorMode}
-										/>
-									}>
+									>
 									{renderProducts()}
 									</Stack>
 									<Button fontFamily={'heading'} bg={'gray.200'} color={'gray.800'} onClick={onResourcePickerOpen}>
