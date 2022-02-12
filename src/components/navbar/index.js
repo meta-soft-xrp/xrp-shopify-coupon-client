@@ -259,10 +259,10 @@ import {
     //     },
     //   ],
     // },
-    {
-      label: 'Looks',
-      href: '/looks',
-    },
+    // {
+    //   label: 'Looks',
+    //   href: '/looks',
+    // },
     {
         label: 'Settings',
         href: '/settings',
