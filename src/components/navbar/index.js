@@ -50,16 +50,7 @@ import {
               aria-label={'Toggle Navigation'}
             />
           </Flex>
-          <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
-            <Link to="/">
-            <Text
-              textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
-              fontFamily={'heading'}
-              color={useColorModeValue('gray.800', 'white')}>
-              LookBook
-            </Text>
-            </Link>
-  
+          <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>  
             <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
               <DesktopNav />
             </Flex>
@@ -270,7 +261,7 @@ import {
     // },
     {
       label: 'Looks',
-      href: '/',
+      href: '/looks',
     },
     {
         label: 'Settings',

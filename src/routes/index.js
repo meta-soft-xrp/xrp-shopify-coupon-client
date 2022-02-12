@@ -29,6 +29,7 @@ const AppRoutes = (props) => {
 			<Route path="/shopify/authorize" element={<Authorize />} /> */}
 			<Route path="/embed" element={<EmbedRoute />} />
 			<Route path="/settings" element={<SettingsRoute />} />
+			<Route path="/looks" element={<App />} />
 			<Route path="/looks/:id" element={<LookRoute />} />
 			<Route path="/looks/create" element={<LookRoute />} />
 			<Route path="/shopify" element={<App />} />

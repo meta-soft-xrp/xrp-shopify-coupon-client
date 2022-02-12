@@ -26,7 +26,7 @@ const SettingsRoute = () => {
 		try {
 			await postScripts(shop);
 			toast({
-				title: `Widget added successfully!`,
+				title: `Widget added successfully! Please visit your online store after 30 seconds to check the widget.`,
 				status: 'success'
 			});
 		} catch (e) {
