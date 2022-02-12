@@ -124,7 +124,7 @@ const ProductsModal = (props) => {
 	}
   return (
     <>
-      <Modal  blockScrollOnMount={false} preserveScrollBarGap lockFocusAcrossFrames={false} isOpen={isOpen} onClose={onClose} size={useBreakpointValue({ base: 'xl', md: 'full' })}>
+      <Modal isCentered scrollBehavior={"inside"} closeOnOverlayClick blockScrollOnMount={false} preserveScrollBarGap lockFocusAcrossFrames={false} isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Shop the look</ModalHeader>
@@ -255,7 +255,7 @@ const EmbedRoute = (props) => {
 											onClick={() => onLooksClick({ lookId: look.id, products: look.get('products')})}
 											isFullWidth
 										>
-											View Products
+											Shop The Look
 										</Button>
 									</Stack>
 								</Box>

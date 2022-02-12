@@ -2,7 +2,8 @@ import { useState, useEffect} from "react";
 import {
 	Flex,
   Skeleton,
-  Box
+  Box,
+  Container
 } from "@chakra-ui/react"
 import {
   Navigate
@@ -11,38 +12,61 @@ import NavBar from "./components/navbar";
 import LooksRoute from "./routes/looks";
 import { parseQuery } from "./utils/url";
 import Authorize from "./routes/shopify/Authorize";
-
+import Parse from "parse";
 function App() {
   const [shopifySessionAvailable, setShopifySessionAvailable] = useState(false);
   const [shopifyHmacAvailable, setShopifyHmacAvailable] = useState(false);
   const [shopifyCodeAvailable, setShopifyCodeAvailable] = useState(false);
+  const [shopifyHostAvailable, setShopifyHostAvailable] = useState(false);
 
   const [isEmbed, setIsEmbed] = useState(false);
   useEffect(() => {
-    const { code, session, hmac, embed, shop = '' } = parseQuery(window.location.search);
+    const { code, session, hmac, embed, host = '', userToken } = parseQuery(window.location.search);
     window.lookbook = (parseQuery(window.location.search));
     if (session) {
       setShopifySessionAvailable(true);
       setShopifyHmacAvailable(false);
       setShopifyCodeAvailable(false);
+      setShopifyHostAvailable(false)
     } else if (code) {
       setShopifySessionAvailable(false);
       setShopifyHmacAvailable(false);
       setShopifyCodeAvailable(true);
+      setShopifyHostAvailable(false)
       window.location.replace(`${process.env.REACT_APP_SERVER_URL}/shopify/callback${document.location.search}`)
     } else if (hmac){
       setShopifySessionAvailable(false);
       setShopifyHmacAvailable(true);
       setShopifyCodeAvailable(false)
+      setShopifyHostAvailable(false)
       window.location.replace(`${process.env.REACT_APP_SERVER_URL}/shopify${document.location.search}`)
+    } else if (host && !code && !hmac) {
+      setShopifyHostAvailable(true);
+      setShopifySessionAvailable(false);
+      setShopifyHmacAvailable(false);
+      setShopifyCodeAvailable(false)
     } else if (embed) {
       setIsEmbed(true);
       setShopifySessionAvailable(false);
       setShopifyHmacAvailable(false);
       setShopifyCodeAvailable(false)
+      setShopifyHostAvailable(false)
+    }
+
+    if (userToken) {
+      if (Parse.User.current()) {
+        console.log(Parse.User.current().get('sessionToken'));
+        if (Parse.User.current().get('sessionToken') !== userToken) {
+          Parse.User.logOut().then(() => Parse.User.become(userToken)).catch(() => Parse.User.become(userToken))
+        }
+      } else {
+        Parse.User.become(userToken);
+      }   
+    } else if (!userToken && !Parse.User.current()) {
     }
   }, []);
   
+
   if (shopifySessionAvailable) {
     return (
       <>
@@ -52,26 +76,28 @@ function App() {
     );
   } else if (isEmbed) {
     return <Navigate to="/embed" replace />
-  } else if (shopifyHmacAvailable || shopifyCodeAvailable) {
+  } else if ((shopifyHmacAvailable || shopifyCodeAvailable) || shopifyHostAvailable) {
     return (	
-      <Flex alignItems="flex-start" flexDirection="row">
-        <Skeleton> 
-          <Box></Box>
-        </Skeleton>
-        <Flex direction="column" width="90%" marginLeft="5">
-          <Skeleton width="100%" height="40px"> 
-        </Skeleton>
-        <br />
-        <Skeleton width="100%" height="20px"> 
-        </Skeleton>
-        <br />
-        <Skeleton width="100%" height="20px"> 
-        </Skeleton>
-        <br />
-        <Skeleton width="100%" height="20px"> 
-        </Skeleton>
+      <Container maxW={'7xl'} p="12">
+        <Flex alignItems="flex-start" flexDirection="row">
+          <Skeleton> 
+            <Box></Box>
+          </Skeleton>
+          <Flex direction="column" width="90%" marginLeft="5">
+            <Skeleton width="100%" height="40px"> 
+          </Skeleton>
+          <br />
+          <Skeleton width="100%" height="20px"> 
+          </Skeleton>
+          <br />
+          <Skeleton width="100%" height="20px"> 
+          </Skeleton>
+          <br />
+          <Skeleton width="100%" height="20px"> 
+          </Skeleton>
+          </Flex>
         </Flex>
-      </Flex>
+      </Container>
     )
   } else {
     return <Authorize />

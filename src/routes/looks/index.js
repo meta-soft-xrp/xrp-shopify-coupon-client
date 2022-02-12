@@ -183,7 +183,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 						<Stack direction='row' spacing={4} marginTop="5">
 							<Link to={`looks/${look.id}`}>
 								<Button colorScheme="blue" isFullWidth leftIcon={<IoCaretForwardOutline />} variant='solid'>
-									View
+									View / Modify
 								</Button>
 							</Link>
 						</Stack>

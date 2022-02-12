@@ -27,9 +27,10 @@ import {
 		Skeleton,
 		VStack,
 		Divider,
-		AvatarBadge
+		AvatarBadge,
+		ButtonGroup
 } from '@chakra-ui/react';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
 		IoClose,
 		IoAddOutline,
@@ -66,9 +67,11 @@ function CreateLooks(props) {
 	const files = useFilesStore((state) => state.files);
 	const getLooks = useLooksStore((state) => state.getLooks);
 	const postLooks = useLooksStore((state) => state.postLooks);
+	const destroyLooks = useLooksStore((state) => state.destroyLooks);
 	const patchLooks = useLooksStore((state) => state.patchLooks);
 	const { id = '' } = useParams();
 	const toast = useToast();
+	const navigate = useNavigate()
 	const colorMode = useColorModeValue('gray.100', 'gray.700');
 	const [looksName, setLooksName] = useState(
 		props.looks.name
@@ -137,6 +140,21 @@ function CreateLooks(props) {
 		setProducts([...products.filter(Boolean)])
 	}
 
+	const onDestroyLook = async (lookId) => {
+		try {
+			await destroyLooks(lookId);
+			toast({
+				title: `Look deleted!`,
+				status: 'success'
+			});
+			window.history.back();
+		} catch (e) {
+			toast({
+				title: e.message || INTERNAL_SERVER_ERROR,
+				status: 'error'
+			})
+		}
+	}
 	const renderProducts = () => {
 		return products.map((product, index) => (
 			<Stack id={product.id} key={index} justifyContent="space-between"  direction={'row'} background="white" padding="3" borderRadius="lg" marginBottom="4" align={'center'}>
@@ -211,12 +229,12 @@ function CreateLooks(props) {
 											medias: uploads,
 											products: products.map(product => product.id),
 										});
+										window.history.back()
 									}
 									toast({
 										title: `Looks ${id ? 'updated' : 'created'} successfully!`,
 										status: 'success'
 									})
-									// await getSiteScripts();
 								} catch (e) {
 									toast({
 										title: e.message || INTERNAL_SERVER_ERROR,
@@ -318,22 +336,38 @@ function CreateLooks(props) {
 									/>
 							</FormControl>
 						</Stack>
-						<Button
-							isLoading={looks.post.loading || looks.patch.loading}
-							disabled={looks.post.loading || looks.patch.loading}
-							loadingText={`${id ? 'Updating' : 'Saving'} look`}
-							type="submit"
-							fontFamily={'heading'}
-							mt={8}
-							w={'full'}
-							bgGradient="linear(to-r, red.400,pink.400)"
-							color={'white'}
-							_hover={{
-								bgGradient: 'linear(to-r, red.400,pink.400)',
-								boxShadow: 'xl',
-							}}>
-							{`${id ? 'Update' : 'Save'} look`}
-						</Button>
+						<ButtonGroup mt={8} width="full">
+							{
+								data && data.id ? (
+									<Button
+										isLoading={looks.destroy.loading}
+										onClick={() => onDestroyLook(data.id)}
+										isFullWidth
+										variant="ghost"
+										colorScheme="red"
+									>
+										Delete Look
+									</Button>
+								) : null
+							}
+							<Button
+								isLoading={looks.post.loading || looks.patch.loading}
+								disabled={looks.post.loading || looks.patch.loading}
+								loadingText={`${id ? 'Updating' : 'Saving'} look`}
+								type="submit"
+								fontFamily={'heading'}
+								isFullWidth
+								w={'full'}
+								bgGradient="linear(to-r, red.400,pink.400)"
+								color={'white'}
+								_hover={{
+									bgGradient: 'linear(to-r, red.400,pink.400)',
+									boxShadow: 'xl',
+								}}>
+								{`${id ? 'Update' : 'Save'} look`}
+							</Button>
+							
+						</ButtonGroup>
 					</chakra.form>
 					</Box>
 				</>

@@ -33,6 +33,7 @@ const AppRoutes = (props) => {
 			<Route path="/looks/create" element={<LookRoute />} />
 			<Route path="/shopify" element={<App />} />
 			<Route path="/shopify/callback" element={<App />} />
+			<Route path="/authorize" element={<Authorize />} />
 			<Route path="/" element={<App />} />
 		</Routes>
 		</>
