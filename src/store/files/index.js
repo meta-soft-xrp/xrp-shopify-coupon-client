@@ -116,7 +116,6 @@ const useFilesStore = create((set, get) => ({
 				const savedFile = await parseFile.save();
 				return savedFile;
 			}));
-			console.log(savedFiles);
 			set(produce(state => ({
 				...state,
 				files: {
