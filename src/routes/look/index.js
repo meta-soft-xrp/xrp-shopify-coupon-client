@@ -166,7 +166,7 @@ function CreateLooks(props) {
 						justify={'center'}
 						rounded={'full'}
 					>
-						<Image width="100%" height="100%" src={product.image} color={'yellow.500'} />
+						<Image objectFit="contain" width="100%" height="100%" src={product.image} color={'yellow.500'} />
 					</Flex>
 					<Flex direction="column">
 						<Text marginLeft="3" fontWeight={600}>{product.title}</Text>
