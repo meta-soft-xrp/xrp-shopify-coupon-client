@@ -1,1 +1,2 @@
-Content-Security-Policy: frame-ancestors https://*.myshopify.com https://admin.shopify.com;
+/*
+	Content-Security-Policy: frame-ancestors https://*.myshopify.com https://admin.shopify.com;
