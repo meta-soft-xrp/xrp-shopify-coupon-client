@@ -127,7 +127,7 @@ const ProductsModal = (props) => {
       <Modal isCentered scrollBehavior={"inside"} closeOnOverlayClick blockScrollOnMount={false} preserveScrollBarGap lockFocusAcrossFrames={false} isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Shop the look</ModalHeader>
+          <ModalHeader>Shop the products in this look</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
 						{renderProducts()}
