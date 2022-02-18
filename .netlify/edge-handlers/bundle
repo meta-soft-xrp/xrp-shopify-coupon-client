@@ -1,0 +1,1 @@
+!function(){"use strict";var e=Object.freeze({__proto__:null,onRequest:function(e){console.log(`Incoming request for asdfasdf ${e}`)}});netlifyRegistry.set("csp",e)}();

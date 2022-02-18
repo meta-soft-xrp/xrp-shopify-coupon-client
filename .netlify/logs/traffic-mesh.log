@@ -1,0 +1,7 @@
+{"timestamp":"Feb 18 14:05:30.254","level":"INFO","fields":{"message":"bundling edge handlers","dir":"netlify/edge-handlers","out_dir":".netlify/edge-handlers"},"target":"routing_local_loader"}
+{"timestamp":"Feb 18 14:05:30.851","level":"INFO","fields":{"message":"bundled edge handlers","handlers":"[\"csp\"]","num":"1"},"target":"routing_local_loader"}
+{"timestamp":"Feb 18 14:05:30.851","level":"INFO","fields":{"message":"starting watcher","dir":"/Users/siddharthramesh/Desktop/code/frangout/lookbook/client"},"target":"routing_local_loader::watch"}
+{"timestamp":"Feb 18 14:05:31.137","level":"INFO","fields":{"message":"routing-local-proxy running","fwd_proxy_uri":"http://localhost:3000/","listen_port":"8888","local_services_uri":"None"},"target":"routing_local_proxy"}
+{"timestamp":"Feb 18 14:05:31.860","level":"INFO","fields":{"message":"accepting connection","remote_addr":"127.0.0.1:58555"},"target":"routing_local_proxy"}
+{"timestamp":"Feb 18 14:05:32.312","level":"INFO","fields":{"message":"accepting connection","remote_addr":"127.0.0.1:58559"},"target":"routing_local_proxy"}
+{"timestamp":"Feb 18 14:05:32.312","level":"INFO","fields":{"message":"accepting connection","remote_addr":"127.0.0.1:58560"},"target":"routing_local_proxy"}
