@@ -13,7 +13,6 @@ import { ShopContext } from "./context";
 
 Parse.initialize(process.env.REACT_APP_API_SHOPLOOKS_PARSE_APP_ID, process.env.REACT_APP_API_SHOPLOOKS_PARSE_JSKEY);
 Parse.serverURL = process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL + '/parse';
-Parse.enableLocalDatastore();
 
 const { host, shop = '' } = parseQuery(window.location.search);
 if (!host) {

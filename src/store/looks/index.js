@@ -71,7 +71,8 @@ const useLooksStore = create((set, get) => ({
 			looksQuery.equalTo('shop', shop);
 			looksQuery.descending('createdAt');
 			const fud = id ? looksQuery.equalTo('objectId', id) : null;
-			const data = id ? await looksQuery.first(Parse.User.current()) :  await looksQuery.find(Parse.User.current());
+			// const data = id ? await looksQuery.first(Parse.User.current()) :  await looksQuery.find(Parse.User.current());
+			const data = id ? await looksQuery.first() :  await looksQuery.find();
 
 			if (id && data.get('products').length) {
 				const { data: products } = await Parse.Cloud.run('get_products', {
@@ -136,15 +137,16 @@ const useLooksStore = create((set, get) => ({
 			looks.set('medias', medias);
 			looks.set('products', products);
 			looks.set('shop', shop);
-			if (Parse.User.current() && Parse.User.current().id) {
-				looks.set('createdBy', Parse.User.current());
-				const acl = new Parse.ACL();
-				acl.setPublicWriteAccess(false);
-				acl.setPublicReadAccess(true);
-				acl.setWriteAccess(Parse.User.current().id, true);
-				looks.setACL(acl);
-			}
-			const data = await looks.save(null, Parse.User.current());
+			// if (Parse.User.current() && Parse.User.current().id) {
+			// 	looks.set('createdBy', Parse.User.current());
+			// 	const acl = new Parse.ACL();
+			// 	acl.setPublicWriteAccess(false);
+			// 	acl.setPublicReadAccess(true);
+			// 	acl.setWriteAccess(Parse.User.current().id, true);
+			// 	looks.setACL(acl);
+			// }
+			// const data = await looks.save(null, Parse.User.current());
+			const data = await looks.save(null);
 
 			set(produce(state => ({
 				...state,
@@ -198,7 +200,8 @@ const useLooksStore = create((set, get) => ({
 			looks.set('medias', medias);
 			looks.set('products', products);
 			looks.set('shop', shop);
-			const data = await looks.save(null, Parse.User.current());
+			// const data = await looks.save(null, Parse.User.current());
+			const data = await looks.save(null);
 
 			set(produce(state => ({
 				...state,
@@ -248,7 +251,8 @@ const useLooksStore = create((set, get) => ({
 			const Looks = Parse.Object.extend('Looks');
 			const looks = new Looks();
 			looks.id = id;
-			const data = await looks.destroy(Parse.User.current());
+			// const data = await looks.destroy(Parse.User.current());
+			const data = await looks.destroy();
 
 			set(produce(state => ({
 				...state,

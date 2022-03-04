@@ -8,6 +8,7 @@ import {
   Container,
 	useToast,
 	Code,
+	Divider
 } from '@chakra-ui/react';
 import useScriptsStore from "../../store/scripts";
 import { ShopContext } from "../../context";
@@ -72,19 +73,21 @@ const SettingsRoute = () => {
 						Enable or disable "Shop the look" widget on your store. The widget gets appended to the bottom of your store page above the
 						footer on the home page.
 					</Text>
-
-					<Text mt="4" fontSize="lg">
-						If you want the widget only on certain pages or only in certain positions please add the following html tag to custom liquid or custom html section.
-					</Text>
-
-					<br />
-					<Code children={`<div id="frangout-shop-look-app"> </div>`}></Code>
-
-
 					<ButtonGroup mt="8" variant='outline' spacing='6'>
 						<Button isLoading={scripts.post.loading} fontWeight="bold" size="lg" colorScheme='blue' onClick={enableWidget}>Enable Widget Embed</Button>
 						<Button isLoading={scripts.destroy.loading} fontWeight="bold" size="lg" colorScheme="red" onClick={disableWidget}>Disable Widget Embed</Button>
 					</ButtonGroup>
+
+					{/* <br />
+					<br />
+					<Divider />
+					<Text mt="4" fontSize="lg">
+						NOTE: If you want the widget only on certain pages or only in certain positions please add the following html tag to custom liquid or custom html section.
+					</Text>
+
+					<br />
+					<Code children={`<div id="frangout-shop-look-app"> </div>`}></Code>
+				 */}
 				</Box>
 			</Box>
 		</Container>
