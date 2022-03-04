@@ -18,7 +18,12 @@ function App() {
   const [shopifyHmacAvailable, setShopifyHmacAvailable] = useState(false);
   const [shopifyCodeAvailable, setShopifyCodeAvailable] = useState(false);
   const [shopifyHostAvailable, setShopifyHostAvailable] = useState(false);
-
+  
+  // try {
+  //   Parse.User.logOut();
+  // } catch (e) {
+  //   console.error(e)
+  // }
   const [isEmbed, setIsEmbed] = useState(false);
   useEffect(() => {
     const { code, session, hmac, embed, host = '', userToken } = parseQuery(window.location.search);
