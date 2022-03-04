@@ -53,16 +53,16 @@ function App() {
       setShopifyHostAvailable(false)
     }
 
-    // if (userToken) {
-    //   if (Parse.User.current()) {
-    //     if (Parse.User.current().get('sessionToken') !== userToken) {
-    //       Parse.User.logOut().then(() => Parse.User.become(userToken)).catch(() => Parse.User.become(userToken))
-    //     }
-    //   } else {
-    //     Parse.User.become(userToken);
-    //   }   
-    // } else if (!userToken && !Parse.User.current()) {
-    // }
+    if (userToken) {
+      // if (Parse.User.current()) {
+      //   if (Parse.User.current().get('sessionToken') !== userToken) {
+      //     Parse.User.logOut().then(() => Parse.User.become(userToken)).catch(() => Parse.User.become(userToken))
+      //   }
+      // } else {
+      //   Parse.User.become(userToken);
+      // } 
+    } else {
+    }
   }, []);
   
 
