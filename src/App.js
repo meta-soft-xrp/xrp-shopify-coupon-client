@@ -19,11 +19,24 @@ function App() {
   const [shopifyCodeAvailable, setShopifyCodeAvailable] = useState(false);
   const [shopifyHostAvailable, setShopifyHostAvailable] = useState(false);
   
-  // try {
-  //   Parse.User.logOut();
-  // } catch (e) {
-  //   console.error(e)
-  // }
+  if ('storage' in navigator && 'estimate' in navigator.storage) {
+    navigator.storage.estimate().then(data => {
+      const {usage, quota} = data;
+      console.log(`Using ${usage} out of ${quota} bytes.`);
+      if(quota <= 1003575331){
+        console.log('Incognito')
+    } else {
+        try {
+          Parse.User.logOut();
+        } catch (e) {
+
+        }
+    }
+    })    
+  } else {
+      console.log('Can not detect incognito')
+  }
+
   const [isEmbed, setIsEmbed] = useState(false);
   useEffect(() => {
     const { code, session, hmac, embed, host = '', userToken } = parseQuery(window.location.search);
