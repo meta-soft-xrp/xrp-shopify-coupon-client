@@ -103,6 +103,9 @@ const useLooksStore = create((set, get) => ({
 			return data;
 
 		} catch (e) {
+			if (e.code ===  Parse.Error.INVALID_SESSION_TOKEN) {
+				Parse.User.logOut();
+			}
 			set(produce(state => ({
 				...state,
 				looks: {
