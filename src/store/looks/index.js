@@ -66,26 +66,12 @@ const useLooksStore = create((set, get) => ({
 		})))
 
 		try {
-			const Looks = Parse.Object.extend('Looks');
-			const looksQuery = new Parse.Query(Looks);
-			looksQuery.equalTo('shop', shop);
-			looksQuery.descending('createdAt');
-			const fud = id ? looksQuery.equalTo('objectId', id) : null;
-			// const data = id ? await looksQuery.first(Parse.User.current()) :  await looksQuery.find(Parse.User.current());
-			const data = id ? await looksQuery.first() :  await looksQuery.find();
 
-			if (id && data.get('products').length) {
-				const { data: products } = await Parse.Cloud.run('get_products', {
-					shop: shop,
-					ids: data.get('products').map(p => {
-						if (typeof p === "string") {
-							return p.split('/')?.pop()
-						}
-						return undefined
-					}).filter(Boolean)
-				});
-				data.set('products', products);
-			}
+			// Parse.Cloud.run('get_looks', {
+			// 	shop, id
+			// })
+		
+			const { data } = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_looks?shop=${shop}&id=${id}`);
 			set(produce(state => ({
 				...state,
 				looks: {
@@ -94,7 +80,7 @@ const useLooksStore = create((set, get) => ({
 						...INITIAL_LOOKS_STATE.get,
 						success: {
 							ok: true,
-							data,
+							data: data,
 						}
 					}
 				}
@@ -103,6 +89,7 @@ const useLooksStore = create((set, get) => ({
 			return data;
 
 		} catch (e) {
+			console.error(e)
 			if (e.code ===  Parse.Error.INVALID_SESSION_TOKEN) {
 				Parse.User.logOut();
 			}
@@ -134,23 +121,13 @@ const useLooksStore = create((set, get) => ({
 		})))
 
 		try {
-			const Looks = Parse.Object.extend('Looks');
-			const looks = new Looks();
-			looks.set('name', name);
-			looks.set('medias', medias);
-			looks.set('products', products);
-			looks.set('shop', shop);
-			// if (Parse.User.current() && Parse.User.current().id) {
-			// 	looks.set('createdBy', Parse.User.current());
-			// 	const acl = new Parse.ACL();
-			// 	acl.setPublicWriteAccess(false);
-			// 	acl.setPublicReadAccess(true);
-			// 	acl.setWriteAccess(Parse.User.current().id, true);
-			// 	looks.setACL(acl);
-			// }
-			// const data = await looks.save(null, Parse.User.current());
-			const data = await looks.save(null);
-
+			
+			const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_looks`, {
+				shop,
+				name,
+				medias,
+				products
+			});
 			set(produce(state => ({
 				...state,
 				looks: {
@@ -196,15 +173,13 @@ const useLooksStore = create((set, get) => ({
 			}
 		})))
 		try {
-			const Looks = Parse.Object.extend('Looks');
-			const looks = new Looks();
-			looks.id = id;
-			looks.set('name', name);
-			looks.set('medias', medias);
-			looks.set('products', products);
-			looks.set('shop', shop);
-			// const data = await looks.save(null, Parse.User.current());
-			const data = await looks.save(null);
+			const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_looks`, {
+				id,
+				shop,
+				name,
+				medias,
+				products
+			});
 
 			set(produce(state => ({
 				...state,
@@ -251,11 +226,8 @@ const useLooksStore = create((set, get) => ({
 		})))
 
 		try {
-			const Looks = Parse.Object.extend('Looks');
-			const looks = new Looks();
-			looks.id = id;
-			// const data = await looks.destroy(Parse.User.current());
-			const data = await looks.destroy();
+			const { data } = await axios.delete(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/destroy_looks?id=${id}`);
+
 
 			set(produce(state => ({
 				...state,

@@ -108,7 +108,7 @@ const renderCarousel = ({ orangeColorMode, look }) => {
 				width={{ base: '100%' }}
 				zIndex="2"
 			>
-				<Carousel medias={look?.get('medias')} />
+				<Carousel medias={look.medias} />
 			</Box>
 			<Box zIndex="1" width="100%" position="absolute" height="100%">
 				<Box
@@ -124,11 +124,10 @@ const renderCarousel = ({ orangeColorMode, look }) => {
 }
 
 export const LooksCreatedDate = (props) => {
-	const date = DateTime.fromISO(props.date.toISOString())
   return (
     <HStack display="flex" alignItems="center">
       <Text fontWeight="light" fontSize="sm">Created at:</Text>
-      <Text fontSize="sm">{date.toLocaleString(DateTime.DATETIME_MED)}</Text>
+      <Text fontSize="sm">{props.date.toLocaleString(DateTime.DATETIME_MED)}</Text>
     </HStack>
   );
 };
@@ -154,7 +153,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 		);
 	} else if (looks.get.success.data.length) {
 		return looks.get.success.data.map(look => (
-			<Box key={look.id}>
+			<Box key={look.objectId}>
 				<Box
 					marginTop={{ base: '1', sm: '5' }}
 					marginBottom={{ base: '1', sm: '5' }}
@@ -173,15 +172,15 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 						{/* <BlogTags tags={['Engineering', 'Product']} /> */}
 						<Skeleton isLoaded={!looks.get.loading}>
 						<Heading marginTop="1">
-							<Link textDecoration="none" _hover={{ textDecoration: 'none' }} to={`looks/${look.id}`}>
-								{look.get('name')}
+							<Link textDecoration="none" _hover={{ textDecoration: 'none' }} to={`looks/${look.objectId}`}>
+								{look.name}
 							</Link>
 						</Heading>
-						<LooksCreatedDate date={look.get('createdAt')} />
+						<LooksCreatedDate date={look.createdAt} />
 						</Skeleton>
 						{renderLookPoints({ look })}
 						<Stack direction='row' spacing={4} marginTop="5">
-							<Link to={`looks/${look.id}`}>
+							<Link to={`looks/${look.objectId}`}>
 								<Button colorScheme="blue" isFullWidth leftIcon={<IoCaretForwardOutline />} variant='solid'>
 									View / Modify
 								</Button>

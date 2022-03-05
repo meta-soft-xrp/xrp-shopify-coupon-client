@@ -49,7 +49,7 @@ function Upload(props = {}) {
 			onClose(data || []);
 		} catch (e) {
 			toast({
-				title: e.message || INTERNAL_SERVER_ERROR,
+				title: "Incognito mode is not allowed. " + (e.message || INTERNAL_SERVER_ERROR),
 				status: 'error'
 			})
 		}

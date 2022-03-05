@@ -107,16 +107,17 @@ function CreateLooks(props) {
 	const getLooskById = async () => {
 		if (id) {
 			const data = await getLooks({ id });
+			console.log("data is ", data)
 			if (data) {
-				setLooksName(data?.get('name'))
+				setLooksName(data?.name)
 				setUploads([
 					...uploads,
-					...data?.get('medias'), 
+					...data?.medias, 
 				])
 				
 				setProducts([
 					...products,
-					...data?.get('products').map(p => ({
+					...data?.products.map(p => ({
 						id: p.admin_graphql_api_id,
 						title: p.title,
 						image: p.image.src
@@ -204,7 +205,7 @@ function CreateLooks(props) {
 							color={'gray.800'}
 							lineHeight={1.1}
 							fontSize={{ base: '2xl', sm: '3xl', md: '4xl' }}>
-							{data && data.get ? data.get('name') : 'Create a look'}
+							{data && data.name ? data.name : 'Create a look'}
 						</Heading>
 						<Text color={'gray.500'} fontSize={{ base: 'sm', sm: 'md' }}>
 							Add a name for the look you create and link the products from your store that can form this look.
@@ -261,9 +262,9 @@ function CreateLooks(props) {
 								<AvatarGroup>
 									{uploads.map((upload, index) => (
 										<Avatar
-											key={upload.name() + index}
-											name={upload.name()}
-											src={upload.url()}
+											key={(upload._name || upload.name) + index}
+											name={upload._name || upload.name}
+											src={upload._url || upload.url}
 											size="lg"
 											// size={useBreakpointValue({ base: 'md', md: 'lg' })}
 											position={'relative'}
@@ -334,10 +335,10 @@ function CreateLooks(props) {
 						</Stack>
 						<ButtonGroup mt={8} width="full">
 							{
-								data && data.id ? (
+								data && data.objectId ? (
 									<Button
 										isLoading={looks.destroy.loading}
-										onClick={() => onDestroyLook(data.id)}
+										onClick={() => onDestroyLook(data.objectId)}
 										isFullWidth
 										variant="ghost"
 										colorScheme="red"

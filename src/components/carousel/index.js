@@ -84,7 +84,7 @@ export default function CaptionCarousel(props) {
             backgroundPosition="center"
             backgroundRepeat="no-repeat"
             backgroundSize="cover"
-            backgroundImage={`url(${media.url ? media.url() : media.src})`}>
+            backgroundImage={`url(${media.url ? media.url : media.src})`}>
             {/* This is the block you need to change, to customize the caption */}
             <Container padding="0" size="container.lg" height={props.height || '400px'} position="relative">
               <Stack

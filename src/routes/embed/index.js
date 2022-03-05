@@ -241,18 +241,18 @@ const EmbedRoute = (props) => {
 											objectFit={'cover'}
 											src={'https://images.unsplash.com/photo-1518051870910-a46e30d9db16?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1350&q=80'}
 										/> */}
-										<Carousel medias={look.get('medias')} height={260} width={282} />
+										<Carousel medias={look.medias} height={260} width={282} />
 									</Box>
 									<Stack pt={3} align={'center'}>
 										<Text color={'gray.500'} fontSize={'sm'} textTransform={'uppercase'}>
-											{look.get('products').length} products in this look
+											{look.products.length} products in this look
 										</Text>
 										<Heading fontSize={'2xl'} fontFamily={'body'} fontWeight={500}>
-											{look.get('name')}
+											{look.name}
 										</Heading>
 										<Button
 											marginTop={"10px"}
-											onClick={() => onLooksClick({ lookId: look.id, products: look.get('products')})}
+											onClick={() => onLooksClick({ lookId: look.id || look.objectId, products: look.products})}
 											isFullWidth
 										>
 											Shop The Look

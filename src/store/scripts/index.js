@@ -66,7 +66,7 @@ const useScriptsStore = create((set, get) => ({
 		})))
 
 		try {
-			const data = await Parse.Cloud.run('post_scripts', { shop });
+			const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_scripts`, { shop });
 
 			set(produce(state => ({
 				...state,
@@ -113,7 +113,7 @@ const useScriptsStore = create((set, get) => ({
 		})))
 
 		try {
-			const data = await Parse.Cloud.run('destroy_scripts', { shop })
+			const { data } = await axios.delete(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/destroy_scripts?shop=${shop}`);
 
 			set(produce(state => ({
 				...state,
