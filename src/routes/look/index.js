@@ -37,6 +37,7 @@ import {
 		IoCloseCircleOutline,
 	} from 'react-icons/io5';
 import {ResourcePicker} from '@shopify/app-bridge-react';
+import NavBar from "../../components/navbar";
 
 import useFilesStore from "../../store/files"; 
 
@@ -375,6 +376,8 @@ function CreateLooks(props) {
 	}
 
 	return (
+		<>
+		<NavBar />
 		<Box position={'relative'}>
 			<Container
 				as={SimpleGrid}
@@ -404,6 +407,7 @@ function CreateLooks(props) {
 				style={{ filter: 'blur(70px)' }}
 			/>
 		</Box>
+		</>
 	);
 }
 	

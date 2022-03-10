@@ -19,6 +19,7 @@ import {
     CloseIcon,
     ChevronDownIcon,
     ChevronRightIcon,
+    ArrowBackIcon
   } from '@chakra-ui/icons';
   import { Link } from "react-router-dom"
   
@@ -41,6 +42,7 @@ import {
             flex={{ base: 1, md: 'auto' }}
             ml={{ base: -2 }}
             display={{ base: 'flex', md: 'none' }}>
+            <ArrowBackIcon onClick={() => window.history.back()} justifyContent="center" alignItems="center" boxSize={6} />
             <IconButton
               onClick={onToggle}
               icon={
@@ -51,11 +53,12 @@ import {
             />
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>  
-            <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
+          <ArrowBackIcon cursor="pointer" onClick={() => window.history.back()} display={{ base: 'none', md: 'flex' }}  justifyContent="center" alignItems="center" boxSize={6} />
+            <Flex display={{ base: 'none', md: 'flex' }} ml={10} alignItems="center">
               <DesktopNav />
             </Flex>
           </Flex>
-            <Link to="/looks/create">
+            {/* <Link to="/looks/create">
             <Stack
               flex={{ base: 1, md: 0 }}
               justify={'flex-end'}
@@ -74,7 +77,7 @@ import {
                 Create Look
               </Button>
             </Stack>
-          </Link>
+          </Link> */}
         </Flex>
   
         <Collapse in={isOpen} animateOpacity>
@@ -263,6 +266,10 @@ import {
     //   label: 'Looks',
     //   href: '/looks',
     // },
+    {
+      label: 'Add New Look',
+      href: '/looks/create',
+    },
     {
         label: 'Settings',
         href: '/settings',
