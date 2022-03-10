@@ -40,6 +40,7 @@ import {
           align={'center'}>
           <Flex
             flex={{ base: 1, md: 'auto' }}
+            alignItems="center"
             ml={{ base: -2 }}
             display={{ base: 'flex', md: 'none' }}>
             <ArrowBackIcon onClick={() => window.history.back()} justifyContent="center" alignItems="center" boxSize={6} />
