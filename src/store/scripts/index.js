@@ -53,6 +53,52 @@ const INITIAL_SCRIPTS_STATE = {
 
 const useScriptsStore = create((set, get) => ({
 	scripts: INITIAL_SCRIPTS_STATE,
+	getScripts: async (shop = window.lookbook.shop) => {
+		set(produce(state => ({
+			...state,
+			scripts: {
+				...state.scripts,
+				get: {
+					...INITIAL_SCRIPTS_STATE.get,
+					loading: true,
+				}
+			}
+		})))
+	
+		try {
+			const { data } = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_scripts?shop=${shop}`);
+			set(produce(state => ({
+				...state,
+				scripts: {
+					...state.scripts,
+					get: {
+						...INITIAL_SCRIPTS_STATE.get,
+						success: {
+							ok: true,
+							data
+						},
+					}
+				}
+			})))
+			return data;
+	
+		} catch (e) {
+			set(produce(state => ({
+				...state,
+				scripts: {
+					...state.scripts,
+					get: {
+						...INITIAL_SCRIPTS_STATE.get,
+						failure: {
+							error: true,
+							message: e.message || INTERNAL_SERVER_ERROR
+						},
+					}
+				}
+			})))
+			throw e;
+		}
+	},
 	postScripts: async (shop = window.lookbook.shop) => {
 		set(produce(state => ({
 			...state,

@@ -20,8 +20,15 @@ const SettingsRoute = () => {
 	const shop = useContext(ShopContext);
 	const scripts = useScriptsStore((state) => state.scripts);
   const postScripts = useScriptsStore((state) => state.postScripts);
+	const getScripts = useScriptsStore((state) => state.getScripts);
 	const destroyScripts = useScriptsStore((state) => state.destroyScripts);
 	const toast = useToast();
+
+
+	useEffect(() => {
+
+		getScripts(shop);
+	}, []);
 
 	const enableWidget = async () => {
 		try {
@@ -30,6 +37,7 @@ const SettingsRoute = () => {
 				title: `Widget added successfully! Please visit your online store after 30 seconds to check the widget.`,
 				status: 'success'
 			});
+			getScripts(shop)
 		} catch (e) {
 			toast({
 				title: e.message || INTERNAL_SERVER_ERROR,
@@ -45,6 +53,8 @@ const SettingsRoute = () => {
 				title: `Widget removed successfully!`,
 				status: 'success'
 			});
+			getScripts(shop)
+
 		} catch (e) {
 			toast({
 				title: e.message || INTERNAL_SERVER_ERROR,
@@ -53,6 +63,36 @@ const SettingsRoute = () => {
 		}
 	}
 
+
+	const renderButton = () => {
+		if (scripts.get.loading) {
+			return <Button colorScheme="gray" isLoading isDisabled>Loading ...</Button>
+		} else if (scripts.get.success.data.length) {
+			return (
+				<Button
+					isLoading={scripts.destroy.loading || scripts.get.loading}
+					fontWeight="bold"
+					size="lg"
+					colorScheme="red"
+					onClick={disableWidget}
+				>
+					Remove Widget From Your Store
+				</Button>
+			)
+		} else {
+			return (
+				<Button
+					isLoading={scripts.post.loading || scripts.get.loading}
+					fontWeight="bold"
+					size="lg"
+					colorScheme='blue'
+					onClick={enableWidget}
+				>
+					Add Widget To Your Store
+				</Button>
+			)
+		}
+	}
 	
 	return  (
 		<>
@@ -74,11 +114,10 @@ const SettingsRoute = () => {
 						footer on the home page.
 					</Text>
 					<ButtonGroup mt="8" variant='outline' spacing='6'>
-						<Button isLoading={scripts.post.loading} fontWeight="bold" size="lg" colorScheme='blue' onClick={enableWidget}>Enable Widget Embed</Button>
-						<Button isLoading={scripts.destroy.loading} fontWeight="bold" size="lg" colorScheme="red" onClick={disableWidget}>Disable Widget Embed</Button>
+						{renderButton()}
 					</ButtonGroup>
 
-					{/* <br />
+					<br />
 					<br />
 					<Divider />
 					<Text mt="4" fontSize="lg">
@@ -87,7 +126,7 @@ const SettingsRoute = () => {
 
 					<br />
 					<Code children={`<div id="frangout-shop-look-app"> </div>`}></Code>
-				 */}
+				
 				</Box>
 			</Box>
 		</Container>

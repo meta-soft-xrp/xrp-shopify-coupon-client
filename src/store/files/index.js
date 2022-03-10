@@ -113,8 +113,20 @@ const useFilesStore = create((set, get) => ({
 			}));
 			const savedFiles = await Promise.all(base64s.map(async (base64) => {
 				const parseFile = new Parse.File("looks", { base64: base64.data }, base64.type );
-				const savedFile = await parseFile.save();
-				return savedFile;
+				// const savedFile = await parseFile.save();
+				const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/parse/files/looks`, {
+					base64: parseFile?._source?.base64 || parseFile._data,
+					_ApplicationId: Parse.applicationId,
+					_ClientVersion: "js3.4.1",
+					_ContentType: parseFile?._source?.type,
+					_JavaScriptKey: Parse.javaScriptKey,
+					fileData: { metadata: {}, tags: {} }
+				}, {
+					headers: {
+						'content-type': 'text/plain'
+					}
+				})
+				return data;
 			}));
 			set(produce(state => ({
 				...state,
