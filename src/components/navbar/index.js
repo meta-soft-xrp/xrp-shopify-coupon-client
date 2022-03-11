@@ -271,8 +271,4 @@ import {
       label: 'Add New Look',
       href: '/looks/create',
     },
-    {
-        label: 'Settings',
-        href: '/settings',
-    },
   ];

@@ -26,7 +26,6 @@ const SettingsRoute = () => {
 
 
 	useEffect(() => {
-
 		getScripts(shop);
 	}, []);
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
 		Box,
 		Flex,
@@ -40,10 +40,12 @@ import {ResourcePicker} from '@shopify/app-bridge-react';
 import NavBar from "../../components/navbar";
 
 import useFilesStore from "../../store/files"; 
+import useScriptsStore from "../../store/scripts";
 
 import Upload from "../../components/upload";
 import useLooksStore from "../../store/looks"
 import { INTERNAL_SERVER_ERROR } from '../../constants/strings';
+import { ShopContext } from "../../context";
 
 const renderSkeleton = () => {
 	return (
@@ -62,6 +64,7 @@ const renderSkeleton = () => {
 
 	
 function CreateLooks(props) {
+	const shop = useContext(ShopContext);
 	const { isOpen, onOpen, onClose } = useDisclosure()
 	const { isOpen: isResourcePickerOpen, onOpen: onResourcePickerOpen, onClose: onResourcePickerClose } = useDisclosure()
 	const looks = useLooksStore((state) => state.looks);
@@ -70,6 +73,10 @@ function CreateLooks(props) {
 	const postLooks = useLooksStore((state) => state.postLooks);
 	const destroyLooks = useLooksStore((state) => state.destroyLooks);
 	const patchLooks = useLooksStore((state) => state.patchLooks);
+	const scripts = useScriptsStore((state) => state.scripts);
+	const postScripts = useScriptsStore((state) => state.postScripts);
+	const getScripts = useScriptsStore((state) => state.getScripts);
+
 	const { id = '' } = useParams();
 	const toast = useToast();
 	const navigate = useNavigate()
@@ -231,7 +238,18 @@ function CreateLooks(props) {
 											medias: uploads,
 											products: products.map(product => product.id),
 										});
-										window.history.back()
+										try {
+											const scriptsOnStore = await getScripts(shop);
+											if (scriptsOnStore && scriptsOnStore.length) {
+												// already has a script tag, do nothing.
+											} else {
+												await postScripts(shop)
+											}
+											window.history.back()
+										} catch (e) {
+											window.history.back()
+
+										}
 									}
 									toast({
 										title: `Looks ${id ? 'updated' : 'created'} successfully!`,
@@ -349,8 +367,8 @@ function CreateLooks(props) {
 								) : null
 							}
 							<Button
-								isLoading={looks.post.loading || looks.patch.loading}
-								disabled={looks.post.loading || looks.patch.loading}
+								isLoading={looks.post.loading || looks.patch.loading || scripts.get.loading || scripts.post.loading}
+								disabled={looks.post.loading || looks.patch.loading || scripts.get.loading || scripts.post.loading}
 								loadingText={`${id ? 'Updating' : 'Saving'} look`}
 								type="submit"
 								fontFamily={'heading'}
@@ -402,7 +420,7 @@ function CreateLooks(props) {
 			</Container>
 			<Blur
 				position={'absolute'}
-				top={-10}
+				top={30}
 				left={-10}
 				style={{ filter: 'blur(70px)' }}
 			/>

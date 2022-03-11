@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
 import {
 	Box,
   Heading,
@@ -16,7 +16,17 @@ import {
 	useToast,
 	Skeleton,
 	Alert,
-	AlertIcon,
+	Code,
+	ButtonGroup,
+	useDisclosure,
+	Link as ChakraLink,
+	AlertDialog,
+	AlertDialogOverlay,
+	AlertDialogContent,
+	AlertDialogBody,
+	AlertDialogHeader,
+	AlertDialogCloseButton,
+	AlertDialogFooter
 } from '@chakra-ui/react';
 import { DateTime } from "luxon";
 import Carousel from "../../components/carousel";
@@ -29,6 +39,11 @@ import {
 } from 'react-icons/io5';
 import { Link } from "react-router-dom"
 import useLooksStore from "../../store/looks"
+import useScriptsStore from "../../store/scripts";
+import { ShopContext } from "../../context";
+import { INTERNAL_SERVER_ERROR } from "../../constants/strings";
+import { LinkIcon } from "@chakra-ui/icons";
+
 
 const renderSkeleton = (looks) => {
 	return (
@@ -212,28 +227,177 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
 	}
 	return null;
 }
+
   
 function Looks(props) {
     const looks = useLooksStore((state) => state.looks);
     const getLooks = useLooksStore((state) => state.getLooks);
+		const shop = useContext(ShopContext);
+		const scripts = useScriptsStore((state) => state.scripts);
+		const postScripts = useScriptsStore((state) => state.postScripts);
+		const getScripts = useScriptsStore((state) => state.getScripts);
+		const destroyScripts = useScriptsStore((state) => state.destroyScripts);
     const toast = useToast();
+		const { isOpen, onOpen, onClose } = useDisclosure()
 		const orangeColorMode = useColorModeValue(
 			'radial(orange.600 1px, transparent 1px)',
 			'radial(orange.300 1px, transparent 1px)'
 		);
 		useEffect(() => {
 			getLooks();
+			getScripts(shop);
 		}, [])
+		
     
-    return (
-			<Container maxW={'7xl'} p="12">
+		const renderWidgetStatusAlert = ({ looks }) => {
+			if (!looks.get.success.data.length) {
+				return null;
+			}
+
+			const enableWidget = async () => {
+				try {
+					await postScripts(shop);
+					toast({
+						title: `Widget added successfully! Please visit your online store after 30 seconds to check the widget.`,
+						status: 'success'
+					});
+					getScripts(shop)
+				} catch (e) {
+					toast({
+						title: e.message || INTERNAL_SERVER_ERROR,
+						status: 'error'
+					})
+				}
+			}
+		
+			const disableWidget = async () => {
+				try {
+					await destroyScripts(shop);
+					toast({
+						title: `Widget removed successfully!`,
+						status: 'success'
+					});
+					getScripts(shop)
+		
+				} catch (e) {
+					toast({
+						title: e.message || INTERNAL_SERVER_ERROR,
+						status: 'error'
+					})
+				}
+			}
+
+			const renderButton = () => {
+				if (scripts.get.loading) {
+					return <Button colorScheme="gray" isLoading isDisabled>Loading ...</Button>
+				} else if (scripts.get.success.data.length) {
+					return (
+						<>
+						<ChakraLink target="_blank" href={`http://${shop}#frangout-shop-look-app-wrapper`}>
+							<Button
+								fontWeight="bold"
+								size="md"
+								colorScheme="green"
+								variant="ghost"
+								leftIcon={<LinkIcon />}
+							>
+								Preview Widget
+							</Button>
+						</ChakraLink>
+						<Button
+							isLoading={scripts.destroy.loading || scripts.get.loading}
+							fontWeight="bold"
+							size="md"
+							colorScheme="red"
+							onClick={disableWidget}
+						>
+							Remove Widget
+						</Button>
+						</>
+					)
+				} else {
+					return (
+						<Button
+							isLoading={scripts.post.loading || scripts.get.loading}
+							fontWeight="bold"
+							size="md"
+							colorScheme='blue'
+							onClick={enableWidget}
+						>
+							Add Widget To Your Store
+						</Button>
+					)
+				}
+			}
+
+			const renderScriptStatusText = () => {
+				if (scripts.get.loading) {
+					return null;
+				} else if (scripts.get.success.data.length) {
+					return (
+						<Flex direction="column">
+							<Text>
+								"Shop The Look" widget <b>has been added</b> to your store page. 
+								&nbsp;
+							</Text>
+							<Text cursor="pointer" onClick={onOpen} style={{ textDecoration: 'underline'}}>
+									For custom widget position instructions <b>click here.</b>
+							</Text>
+						</Flex>
+					)
+				} else {
+					return (
+						<Text>
+							"Shop The Look" widget is <b>not added</b> to your store page.
+						</Text>
+					)
+				}
+			}
+			return (
 				<Alert status='info'>
-					<AlertIcon />
-					To enable or disable "Shop the look" widget on your store, please visit the &nbsp;<Link to="/settings" style={{ textDecoration: 'underline'}}><b>Settings page</b></Link>.
+					<Flex direction="row" justifyContent="space-between" width="100%" alignItems="center" height="100%">
+						<Stack>
+							{renderScriptStatusText()}
+						</Stack>
+						<ButtonGroup variant='outline' spacing='6'>
+							{renderButton()}
+						</ButtonGroup>
+					</Flex>
 				</Alert>
-				<br />
-				{renderLooks({ looks, orangeColorMode, getLooks })}
-    </Container>
+			)
+		}
+
+    return (
+			<>
+				{renderWidgetStatusAlert({ looks })}
+				<Container maxW={'7xl'} p="12">
+					<br />
+					{renderLooks({ looks, orangeColorMode, getLooks })}
+				</Container>
+				<AlertDialog
+        	onClose={onClose}
+        	isOpen={isOpen}
+        	isCentered
+      	>
+        <AlertDialogOverlay />
+
+        <AlertDialogContent>
+          <AlertDialogHeader>Custom Widget Position</AlertDialogHeader>
+          <AlertDialogCloseButton />
+          <AlertDialogBody>
+						If you want the widget only on certain pages or only in certain positions please add the following html tag to custom liquid or custom html section.
+						<br />
+						<Code children={`<div id="frangout-shop-look-app"> </div>`}></Code>
+
+					</AlertDialogBody>
+          <AlertDialogFooter>
+            <Button onClick={onClose}>
+              Ok
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+		</>
   );
 };
 
