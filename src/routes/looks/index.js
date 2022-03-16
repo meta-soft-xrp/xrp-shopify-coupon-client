@@ -378,17 +378,21 @@ function Looks(props) {
         	onClose={onClose}
         	isOpen={isOpen}
         	isCentered
+					size="3xl"
       	>
         <AlertDialogOverlay />
 
         <AlertDialogContent>
           <AlertDialogHeader>Custom Widget Position</AlertDialogHeader>
           <AlertDialogCloseButton />
-          <AlertDialogBody>
+          <AlertDialogBody textAlign="center">
 						If you want the widget only on certain pages or only in certain positions please add the following html tag to custom liquid or custom html section.
 						<br />
-						<Code children={`<div id="frangout-shop-look-app"> </div>`}></Code>
-
+						<br />
+						<b><Code size="xl" children={`<div id="frangout-shop-look-app"> </div>`}></Code></b>
+						<br />
+						<br />
+						<iframe width="720" height="405" src="https://www.youtube.com/embed/poWt-ssYDM8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 					</AlertDialogBody>
           <AlertDialogFooter>
             <Button onClick={onClose}>
