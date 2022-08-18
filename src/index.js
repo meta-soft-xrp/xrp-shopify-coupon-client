@@ -19,7 +19,7 @@ if (!host) {
   ReactDOM.render(
     <React.StrictMode>
         <ChakraProvider>
-          <BrowserRouter>
+          <BrowserRouter> 
             <ShopContext.Provider value={shop}>
               <AppRoutes />
             </ShopContext.Provider>

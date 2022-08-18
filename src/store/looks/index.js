@@ -108,7 +108,7 @@ const useLooksStore = create((set, get) => ({
 			})))
 		}
 	},
-	postLooks: async ({ id, shop = window.lookbook.shop, name, medias, products = [] }) => {
+	postLooks: async ({ id, shop = window.lookbook.shop, name, medias, products = [], xrpAddress }) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -126,7 +126,8 @@ const useLooksStore = create((set, get) => ({
 				shop,
 				name,
 				medias,
-				products
+				products,
+				xrpAddress
 			});
 			set(produce(state => ({
 				...state,
@@ -161,7 +162,7 @@ const useLooksStore = create((set, get) => ({
 			throw e;
 		}
 	},
-	patchLooks: async ({ id, shop = window.lookbook.shop, name, medias, products = [] }) => {
+	patchLooks: async ({ id, shop = window.lookbook.shop, name, medias, products = [], xrpAddress }) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -178,7 +179,8 @@ const useLooksStore = create((set, get) => ({
 				shop,
 				name,
 				medias,
-				products
+				products,
+				xrpAddress
 			});
 
 			set(produce(state => ({

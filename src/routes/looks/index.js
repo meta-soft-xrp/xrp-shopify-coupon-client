@@ -95,7 +95,7 @@ const renderLookPoints = ({ look }) => {
           <Icon as={IoCartSharp} />
         </Box>
         <VStack align={"start"}>
-          <Text fontWeight={600}>Add to cart</Text>
+          <Text fontWeight={600}>Add to Cart</Text>
           <Text color={"gray.600"} marginTop="0" style={{ marginTop: 0 }}>
             Cart revenue
           </Text>
@@ -230,7 +230,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
         <Flex direction="column" align="center">
           <VStack spacing="3">
             <Heading as="h1" size="md">
-              You have not created any looks yet.
+              You have not created any looks yet
             </Heading>
           </VStack>
           <br />
@@ -510,6 +510,7 @@ function Looks(props) {
 
   return (
     <>
+    <ChakraLink href="/settings">Settings</ChakraLink>
       {renderWidgetStatusAlert({ looks })}
       <Divider />
       {renderChargesStatusAlert()}
