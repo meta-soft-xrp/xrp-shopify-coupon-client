@@ -12,13 +12,13 @@ import {
   Input,
   FormControl,
   FormLabel,
-  FormErrorMessage
 } from "@chakra-ui/react";
 import useScriptsStore from "../../store/scripts";
 import { ShopContext } from "../../context";
 import { INTERNAL_SERVER_ERROR } from "../../constants/strings";
 import NavBar from "../../components/navbar";
-import { Formik, Form, Field } from 'formik';
+import { Form, useFormik } from "formik";
+import * as Yup from "yup";
 
 import WAValidator from "multicoin-address-validator";
 
@@ -29,23 +29,10 @@ const SettingsRoute = () => {
   const getScripts = useScriptsStore((state) => state.getScripts);
   const destroyScripts = useScriptsStore((state) => state.destroyScripts);
   const toast = useToast();
-  const [validXrp, setValidXrp] = useState("");
-  const [isValid, setIsValid] = useState('Please enter valid XRP address');
+
   useEffect(() => {
     getScripts(shop);
   }, []);
-   
-  const validateAddress = () => {
-    const valid = WAValidator.validate(validXrp, "ripple");
-    if(valid === true){
-      console.log('Its Valid');
-      setIsValid(<Text>Its Valid XRP Address</Text>);
-    }else{
-      console.log('Its Invalid');
-      setIsValid(<Text>Please Check the XRP Address You entered</Text>);
-    }
-};
-  
 
   const enableWidget = async () => {
     try {
@@ -63,51 +50,54 @@ const SettingsRoute = () => {
     }
   };
 
-  const Basic = () => {
-    function validateName(value) {
-      const valid = WAValidator.validate(value, "ripple");
-      let error
-      if (!value && valid === false) {
-        error = 'Please Add Valid XRP address'
-      } else if (value && valid === true) {
-        error = "Jeez! You're not a fan 😱"
+  const walletSchema = Yup.object().shape({
+    walletAddress: Yup.string().required("Wallet Address Is required"),
+  });
+
+
+  const XrpAddressInput = () => {
+    const formik = useFormik({
+      initialValues: { walletAddress: '' },
+      validationSchema: walletSchema,
+      onSubmit: (values) => {
+        const valid = WAValidator.validate(values.walletAddress, 'ripple');
+        if(valid === true){
+          toast({
+            title: 'Wallet Address Is Valid',
+            status: 'success'
+          })
+        }else{
+          toast({
+            title: 'Wallet Address is Invalid',
+            status: 'error'
+          })
+        }
+        
       }
-      return error
-    }
+    });
     return (
-      <Formik
-        initialValues={{ name: '' }}
-        onSubmit={(values, actions) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2))
-            actions.setSubmitting(false)
-          }, 1000)
-        }}
-      >
-        {(props) => (
-          <Form>
-            <Field name='name' validate={validateName}>
-              {({ field, form }) => (
-                <FormControl isInvalid={form.errors.name && form.touched.name}>
-                  <FormLabel>Enter Your XRP address</FormLabel>
-                  <Input {...field} placeholder='XRP Address' />
-                  <FormErrorMessage>{form.errors.name}</FormErrorMessage>
-                </FormControl>
-              )}
-            </Field>
-            <Button
-              mt={4}
-              colorScheme='teal'
-              isLoading={props.isSubmitting}
-              type='submit'
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    )
-  }
+      <Box>
+      
+        <FormControl onSubmit={formik.handleSubmit}>
+          <FormLabel>XRP Wallet Address</FormLabel>
+          <Input
+            id="walletAddress"
+            name="walletAddress"
+            type="text"
+            placeholder="XRP Address"
+            onChange={formik.handleChange}
+            value={formik.values.walletAddress}
+          />
+          {formik.touched.walletAddress && formik.errors.walletAddress
+            ? formik.errors.walletAddress
+            : ""}
+        </FormControl>
+        <Button mt={4} onClick={formik.handleSubmit} type="submit" colorScheme="teal" >
+          Submit
+        </Button>
+      </Box>
+    );
+  };
 
   const disableWidget = async () => {
     try {
@@ -164,20 +154,18 @@ const SettingsRoute = () => {
       <NavBar />
       <Container maxW={"7xl"} p="12">
         <Box as="section">
-          {/* <Box maxW="2xl">
-            <Heading size="md">Enter Your XRP address</Heading>
-            <Input
-              type="text"
-              placeholder="XRP Address"
-              onChange={(e) => setValidXrp(e.target.value)}
-              margin='20px 0'
-            />
-            {isValid}<br/>
-            <Button mt={4} colorScheme='teal' onClick={validateAddress}>Validate</Button>
-          </Box> */}
-          <Box mt={20} mb={20}>
-              <Basic />
+          <Box
+            maxW="2xl"
+            mx="auto"
+            px={{ base: "6", lg: "8" }}
+            py={{ base: "6", sm: "8" }}
+            textAlign="center"
+          >
+            {XrpAddressInput()}
           </Box>
+          <br />
+          <br />
+          <Divider />
           <Box
             maxW="2xl"
             mx="auto"

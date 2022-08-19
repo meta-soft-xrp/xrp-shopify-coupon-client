@@ -83,7 +83,6 @@ function CreateLooks(props) {
   const navigate = useNavigate();
   const colorMode = useColorModeValue("gray.100", "gray.700");
   const [looksName, setLooksName] = useState(props.looks.name);
-  const [xrpMerchant, setXrpMerchant] = useState(props.looks.xrpAddress);
   const [uploads, setUploads] = useState(props.looks.files || []);
   const [products, setProducts] = useState(props.looks.products || []);
   const onUploadWidgetClose = (data = []) => {
@@ -250,16 +249,13 @@ function CreateLooks(props) {
                       name: looksName,
                       medias: uploads,
                       products: products.map((product) => product.id),
-                      // XRP Address
-                      xrpAddress: xrpMerchant,
                     });
                   } else {
                     await postLooks({
                       name: looksName,
                       medias: uploads,
                       products: products.map((product) => product.id),
-                      // XRP Address
-                      xrpAddress: xrpMerchant,
+                      
                     });
                     try {
                       const scriptsOnStore = await getScripts(shop);
@@ -298,18 +294,7 @@ function CreateLooks(props) {
                     required
                   />
                 </FormControl>
-                {/* To add XRP details */}
-                <FormControl id="xrp-address">
-                  <FormLabel>XRP Address</FormLabel>
-                  <Input
-                    placeholder="XRP Address"
-                    name="xrp_address"
-                    type="text"
-                    value={xrpMerchant}
-                    onChange={(e) => setXrpMerchant(e.target.value)}
-					required
-                  />
-                </FormControl>
+                
                 <FormControl>
                   <FormLabel>Add medias to this look</FormLabel>
                   <AvatarGroup>
