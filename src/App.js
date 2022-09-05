@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Flex, Skeleton, Box, Container } from "@chakra-ui/react";
+import { Flex, Skeleton, Box, Container, Text } from "@chakra-ui/react";
 import { Navigate } from "react-router-dom";
 import NavBar from "./components/navbar";
 import LooksRoute from "./routes/looks";
@@ -89,10 +89,10 @@ function App() {
 
   if (shopifySessionAvailable) {
     return (
-      <>
+      <Box bg="#f6f6f7">
         <NavBar />
         <LooksRoute />
-      </>
+      </Box>
     );
   } else if (isEmbed) {
     return <Navigate to="/embed" replace />;

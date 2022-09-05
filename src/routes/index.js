@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import App from '../App';
 import LookRoute from "./look";
-import Authorize from "./shopify/Authorize";
+import Authorize from "./shopify/Authorize"; 
 import SettingsRoute from "./settings";
 import EmbedRoute from './embed';
 // You should always import these components even without using else app back navigation will break

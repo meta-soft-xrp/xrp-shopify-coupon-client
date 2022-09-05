@@ -11,7 +11,12 @@ import {
   Divider,
   Input,
   FormControl,
-  FormLabel,
+  InputLeftElement,
+  InputGroup,
+  FormHelperText,
+  Alert,
+  AlertIcon,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import useScriptsStore from "../../store/scripts";
 import { ShopContext } from "../../context";
@@ -54,45 +59,50 @@ const SettingsRoute = () => {
     walletAddress: Yup.string().required("Wallet Address Is required"),
   });
 
-
   const XrpAddressInput = () => {
     const formik = useFormik({
-      initialValues: { walletAddress: '' },
+      initialValues: { walletAddress: "" },
       validationSchema: walletSchema,
       onSubmit: (values) => {
-        const valid = WAValidator.validate(values.walletAddress, 'ripple');
-        if(valid === true){
+        const valid = WAValidator.validate(values.walletAddress, "ripple");
+        if (valid === true) {
           toast({
-            title: 'Wallet Address Is Valid',
-            status: 'success'
-          })
-        }else{
+            title: "Wallet Address Is Valid",
+            status: "success",
+          });
+        } else {
           toast({
-            title: 'Wallet Address is Invalid',
-            status: 'error'
-          })
+            title: "Wallet Address is Invalid",
+            status: "error",
+          });
         }
-        
-      }
+      },
     });
     return (
       <Box>
-      
         <FormControl onSubmit={formik.handleSubmit}>
-          <FormLabel>XRP Wallet Address</FormLabel>
           <Input
             id="walletAddress"
             name="walletAddress"
             type="text"
-            placeholder="XRP Address"
+            placeholder="XRP Wallet Address"
             onChange={formik.handleChange}
             value={formik.values.walletAddress}
           />
-          {formik.touched.walletAddress && formik.errors.walletAddress
-            ? formik.errors.walletAddress
-            : ""}
+          <FormHelperText size="sm">
+            {formik.touched.walletAddress && formik.errors.walletAddress
+              ? formik.errors.walletAddress
+              : "Please add XRP wallet address where to receive XRP from customer"}
+          </FormHelperText>
         </FormControl>
-        <Button mt={4} onClick={formik.handleSubmit} type="submit" colorScheme="teal" >
+
+        <Button
+          mt={4}
+          onClick={formik.handleSubmit}
+          type="submit"
+          size="sm"
+          colorScheme={"messenger"}
+        >
           Submit
         </Button>
       </Box>
@@ -127,7 +137,7 @@ const SettingsRoute = () => {
         <Button
           isLoading={scripts.destroy.loading || scripts.get.loading}
           fontWeight="bold"
-          size="lg"
+          size="sm"
           colorScheme="red"
           onClick={disableWidget}
         >
@@ -139,8 +149,8 @@ const SettingsRoute = () => {
         <Button
           isLoading={scripts.post.loading || scripts.get.loading}
           fontWeight="bold"
-          size="lg"
-          colorScheme="blue"
+          size="sm"
+          colorScheme="green"
           onClick={enableWidget}
         >
           Add Widget To Your Store
@@ -152,51 +162,41 @@ const SettingsRoute = () => {
   return (
     <>
       <NavBar />
-      <Container maxW={"7xl"} p="12">
-        <Box as="section">
-          <Box
-            maxW="2xl"
-            mx="auto"
-            px={{ base: "6", lg: "8" }}
-            py={{ base: "6", sm: "8" }}
-            textAlign="center"
-          >
-            {XrpAddressInput()}
-          </Box>
-          <br />
-          <br />
-          <Divider />
-          <Box
-            maxW="2xl"
-            mx="auto"
-            px={{ base: "6", lg: "8" }}
-            py={{ base: "16", sm: "20" }}
-            textAlign="center"
-          >
-            <Heading size="3xl" fontWeight="extrabold" letterSpacing="tight">
-              Widget embed settings
-            </Heading>
-            <Text mt="4" fontSize="lg">
-              Enable or disable "Shop the look" widget on your store. The widget
-              gets appended to the bottom of your store page above the footer on
-              the home page.
-            </Text>
-            <ButtonGroup mt="8" variant="outline" spacing="6">
-              {renderButton()}
-            </ButtonGroup>
-
-            <br />
-            <br />
-            <Divider />
-            <Text mt="4" fontSize="lg">
-              NOTE: If you want the widget only on certain pages or only in
-              certain positions please add the following html tag to custom
-              liquid or custom html section.
-            </Text>
-
-            <br />
-            <Code children={`<div id="frangout-shop-look-app"> </div>`}></Code>
-          </Box>
+      <Container maxW={"7xl"} p={[12, 6]} bg="#f6f6f7" textAlign={"left"}>
+        <Box as="section" maxW="3xl" mx="auto">
+          <SimpleGrid spacing={4}>
+            <Box bg="white" borderRadius={10} p={5} boxShadow="md">
+              {XrpAddressInput()}
+            </Box>
+            <Box bg="white" borderRadius={10} p={5} boxShadow="md">
+              <Text size="xl" fontWeight='bold'>Widget Embed Settings</Text>
+              <Text mt="4" fontSize="sm">
+                Enable or disable "Shop the look" widget on your store. The
+                widget gets appended to the bottom of your store page above the
+                footer on the home page.
+              </Text>
+              <ButtonGroup mt="4" spacing="6">
+                {renderButton()}
+              </ButtonGroup>
+              <Alert mt={4} status="info">
+                <AlertIcon />
+                <SimpleGrid>
+                  <Box>
+                    <Text fontSize="sm">
+                      NOTE: If you want the widget only on certain pages or only
+                      in certain positions please add the following html tag to
+                      custom liquid or custom html section.
+                    </Text>
+                  </Box>
+                  <Box>
+                    <Code
+                      children={`<div id="frangout-shop-look-app"> </div>`}
+                    ></Code>
+                  </Box>
+                </SimpleGrid>
+              </Alert>
+            </Box>
+          </SimpleGrid>
         </Box>
       </Container>
     </>

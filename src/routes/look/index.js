@@ -29,6 +29,8 @@ import {
   Divider,
   AvatarBadge,
   ButtonGroup,
+  InputGroup,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { IoClose, IoAddOutline, IoCloseCircleOutline } from "react-icons/io5";
@@ -83,6 +85,7 @@ function CreateLooks(props) {
   const navigate = useNavigate();
   const colorMode = useColorModeValue("gray.100", "gray.700");
   const [looksName, setLooksName] = useState(props.looks.name);
+  const [looksPrice, setLooksPrice] = useState(props.looks.price);
   const [uploads, setUploads] = useState(props.looks.files || []);
   const [products, setProducts] = useState(props.looks.products || []);
   const onUploadWidgetClose = (data = []) => {
@@ -113,7 +116,7 @@ function CreateLooks(props) {
       if (data) {
         setLooksName(data?.name);
         setUploads([...uploads, ...data?.medias]);
-
+        setLooksPrice([data?.price]);
         setProducts([
           ...products,
           ...data?.products.map((p) => ({
@@ -234,8 +237,7 @@ function CreateLooks(props) {
               {data && data.name ? data.name : "Create a look"}
             </Heading>
             <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}>
-              Add a name for the look you create and link the products from your
-              store that can form this look.
+              
             </Text>
           </Stack>
           <Box mt={10}>
@@ -247,12 +249,14 @@ function CreateLooks(props) {
                     await patchLooks({
                       id,
                       name: looksName,
+                      price: looksPrice,
                       medias: uploads,
                       products: products.map((product) => product.id),
                     });
                   } else {
                     await postLooks({
                       name: looksName,
+                      price: looksPrice,
                       medias: uploads,
                       products: products.map((product) => product.id),
                       
@@ -293,6 +297,22 @@ function CreateLooks(props) {
                     onChange={(e) => setLooksName(e.target.value)}
                     required
                   />
+                </FormControl>
+
+                <FormControl id="look-price">
+                  <FormLabel>Look Price</FormLabel>
+                  <InputGroup>
+                  <InputLeftAddon children='XRP' />
+                  <Input
+                    placeholder="100"
+                    name="look_price"
+                    type="text"
+                    value={looksPrice}
+                    onChange={(e) => setLooksPrice(e.target.value)}
+                    required
+                  />
+                  </InputGroup>
+                  
                 </FormControl>
                 
                 <FormControl>
@@ -358,6 +378,7 @@ function CreateLooks(props) {
                   <Upload isOpen={isOpen} onClose={onUploadWidgetClose} />
                 </FormControl>
                 <br />
+                <br/>
                 <FormControl id="look-products">
                   <FormLabel>Add products for this look</FormLabel>
                   <Stack spacing={4}>{renderProducts()}</Stack>
@@ -433,7 +454,7 @@ function CreateLooks(props) {
   return (
     <>
       <NavBar />
-      <Box position={"relative"}>
+      <Box position={"relative"} bg="#ccc">
         <Container
           as={SimpleGrid}
           maxW={"7xl"}

@@ -29,8 +29,8 @@ import {
     return (
       <Box>
         <Flex
-          bg={useColorModeValue('white', 'gray.800')}
-          color={useColorModeValue('gray.600', 'white')}
+          bg={useColorModeValue('#f6f6f7', 'gray.800')}
+          color={useColorModeValue('gray.600', '#f6f6f7')}
           minH={'60px'}
           py={{ base: 2 }}
           px={{ base: 4 }}
@@ -55,7 +55,7 @@ import {
           </Flex>
           <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>  
           <ArrowBackIcon cursor="pointer" onClick={() => window.history.back()} display={{ base: 'none', md: 'flex' }}  justifyContent="center" alignItems="center" boxSize={6} />
-            <Flex display={{ base: 'none', md: 'flex' }} ml={10} alignItems="center">
+            <Flex display={{ base: 'none', md: 'flex' }} ml={10} alignItems="center" >
               <DesktopNav />
             </Flex>
           </Flex>
@@ -271,4 +271,8 @@ import {
       label: 'Add New Look',
       href: '/looks/create',
     },
+    {
+      label: 'Settings',
+      href: '/settings'
+    }
   ];

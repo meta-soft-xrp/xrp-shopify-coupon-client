@@ -36,7 +36,9 @@ import {
   IoEye,
   IoCartSharp,
   IoLogoUsd,
+  IoWallet
 } from "react-icons/io5";
+
 import { Link } from "react-router-dom";
 import useLooksStore from "../../store/looks";
 import useScriptsStore from "../../store/scripts";
@@ -103,7 +105,7 @@ const renderLookPoints = ({ look }) => {
       </HStack>
       <HStack align={"top"}>
         <Box color={"green.400"} px={2}>
-          <Icon as={IoLogoUsd} />
+          <Icon as={IoWallet} />
         </Box>
         <VStack align={"start"}>
           <Text fontWeight={600}>Conversion</Text>
@@ -125,9 +127,6 @@ const renderCarousel = ({ orangeColorMode, look }) => {
       position="relative"
       alignItems="center"
     >
-      <Box width={{ base: "100%" }} zIndex="2">
-        <Carousel medias={look.medias} />
-      </Box>
       <Box zIndex="1" width="100%" position="absolute" height="100%">
         <Box
           bgGradient={orangeColorMode}
@@ -136,6 +135,10 @@ const renderCarousel = ({ orangeColorMode, look }) => {
           height="100%"
         />
       </Box>
+      <Box width={{ base: "100%" }} zIndex="2">
+        <Carousel medias={look.medias} />
+      </Box>
+      
     </Box>
   );
 };
@@ -176,7 +179,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
     );
   } else if (looks.get.success.data.length) {
     return looks.get.success.data.map((look) => (
-      <Box key={look.objectId}>
+      <Box key={look.objectId} >
         <Box
           marginTop={{ base: "1", sm: "5" }}
           marginBottom={{ base: "1", sm: "5" }}
@@ -184,6 +187,10 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
           flexDirection={{ base: "column", sm: "row" }}
           justifyContent="space-between"
           key={look.objectId}
+          padding="20px"
+          boxShadow={'md'}
+          borderRadius={'10px'}
+          bg={'white'}
         >
           {renderCarousel({ orangeColorMode, look })}
           <Box
@@ -195,7 +202,7 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
           >
             {/* <BlogTags tags={['Engineering', 'Product']} /> */}
             <Skeleton isLoaded={!looks.get.loading}>
-              <Heading marginTop="1">
+              <Text fontSize='3xl' marginTop="1" textTransform={'capitalize'}>
                 <Link
                   textDecoration="none"
                   _hover={{ textDecoration: "none" }}
@@ -203,7 +210,8 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
                 >
                   {look.name}
                 </Link>
-              </Heading>
+              </Text>
+              
               <LooksCreatedDate date={look.createdAt} />
             </Skeleton>
             {renderLookPoints({ look })}
@@ -264,7 +272,6 @@ function Looks(props) {
   );
   // const getViews = useViewsStore((state) => state.getViews);
   // const viewsState = useViewsStore((state) => state.viewsState);
-
   const getCharges = useChargesStore((state) => state.getCharges);
   const postCharges = useChargesStore((state) => state.postCharges);
   const chargesState = useChargesStore((state) => state.chargesState);
@@ -407,13 +414,14 @@ function Looks(props) {
       }
     };
     return (
-      <Alert status="info">
+      <Alert status="info" boxShadow='md'>
         <Flex
           direction="row"
           justifyContent="space-between"
           width="100%"
           alignItems="center"
           height="100%"
+          
         >
           <Stack>{renderScriptStatusText()}</Stack>
           <ButtonGroup variant="outline" spacing="6">
@@ -510,12 +518,11 @@ function Looks(props) {
 
   return (
     <>
-    <ChakraLink href="/settings">Settings</ChakraLink>
+    
       {renderWidgetStatusAlert({ looks })}
       <Divider />
       {renderChargesStatusAlert()}
-      <Container maxW={"7xl"} p="12">
-        <br />
+      <Container maxW={"3xl"}>
         {renderLooks({ looks, orangeColorMode, getLooks })}
       </Container>
       <AlertDialog onClose={onClose} isOpen={isOpen} isCentered size="3xl">
