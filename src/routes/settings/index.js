@@ -17,15 +17,17 @@ import {
   Alert,
   AlertIcon,
   SimpleGrid,
+  FormErrorMessage,
 } from "@chakra-ui/react";
 import useScriptsStore from "../../store/scripts";
 import { ShopContext } from "../../context";
 import { INTERNAL_SERVER_ERROR } from "../../constants/strings";
 import NavBar from "../../components/navbar";
-import { Form, useFormik } from "formik";
+import { ErrorMessage, Form, useFormik } from "formik";
 import * as Yup from "yup";
-
 import WAValidator from "multicoin-address-validator";
+import useWalletStore from "../../store/wallet";
+import Parse from "parse";
 
 const SettingsRoute = () => {
   const shop = useContext(ShopContext);
@@ -34,6 +36,49 @@ const SettingsRoute = () => {
   const getScripts = useScriptsStore((state) => state.getScripts);
   const destroyScripts = useScriptsStore((state) => state.destroyScripts);
   const toast = useToast();
+
+  const [xrpAddress, setXrpAddress] = useState();
+  const xrpWalletAddress = useWalletStore((state) => state.walletState);
+  const postWalletAddress = useWalletStore((state) => state.postWalletAddress);
+
+
+  // useEffect(() => {
+  //     const fetchData = async () => {
+  //       const qry = new Parse.Query("MyClass")
+  //       qry.equalTo("shop", "");
+  //       console.log(await qry.find()); 
+  //     }
+  //     fetchData();
+  // });
+
+  const onSubmitHandler = async (data) => {
+    const walletAddress = data;
+     const valid = WAValidator.validate(walletAddress, "ripple");
+        if (valid === true) {
+          try {
+            await postWalletAddress({shop, walletAddress});
+            toast({
+              title: 'Wallet address added successfully!',
+              status: 'success',
+              duration: 3000,
+            })
+          } catch (e) {
+            toast({
+              title: e.message || "Something went wrong.",
+              status: 'error',
+              duration: 3000,
+            })
+          }
+        } else {
+          toast({
+            title: "Wallet Address is Invalid",
+            status: "error",
+          });
+        }
+    
+  };
+
+  
 
   useEffect(() => {
     getScripts(shop);
@@ -64,23 +109,16 @@ const SettingsRoute = () => {
       initialValues: { walletAddress: "" },
       validationSchema: walletSchema,
       onSubmit: (values) => {
-        const valid = WAValidator.validate(values.walletAddress, "ripple");
-        if (valid === true) {
-          toast({
-            title: "Wallet Address Is Valid",
-            status: "success",
-          });
-        } else {
-          toast({
-            title: "Wallet Address is Invalid",
-            status: "error",
-          });
+        if (values){
+          onSubmitHandler(values.walletAddress);
         }
+       
       },
     });
     return (
       <Box>
-        <FormControl onSubmit={formik.handleSubmit}>
+        <Text size="xl" fontWeight="bold" pb="5px">XRP wallet address where to receive XRP from customer</Text>
+        <FormControl onSubmit={formik.handleSubmit} isInvalid={formik.touched.walletAddress && formik.errors.walletAddress}>
           <Input
             id="walletAddress"
             name="walletAddress"
@@ -89,16 +127,19 @@ const SettingsRoute = () => {
             onChange={formik.handleChange}
             value={formik.values.walletAddress}
           />
-          <FormHelperText size="sm">
+         
+          <FormHelperText size="sm" color={'red'}>
             {formik.touched.walletAddress && formik.errors.walletAddress
               ? formik.errors.walletAddress
-              : "Please add XRP wallet address where to receive XRP from customer"}
+              : (<FormErrorMessage>Please check XRP wallet address where to receive XRP from customer</FormErrorMessage>) 
+              }
           </FormHelperText>
         </FormControl>
 
         <Button
           mt={4}
           onClick={formik.handleSubmit}
+          isLoading={xrpWalletAddress.post.loading}
           type="submit"
           size="sm"
           colorScheme={"messenger"}
@@ -169,7 +210,9 @@ const SettingsRoute = () => {
               {XrpAddressInput()}
             </Box>
             <Box bg="white" borderRadius={10} p={5} boxShadow="md">
-              <Text size="xl" fontWeight='bold'>Widget Embed Settings</Text>
+              <Text size="xl" fontWeight="bold">
+                Widget Embed Settings
+              </Text>
               <Text mt="4" fontSize="sm">
                 Enable or disable "Shop the look" widget on your store. The
                 widget gets appended to the bottom of your store page above the
