@@ -39,18 +39,10 @@ const SettingsRoute = () => {
 
   const [xrpAddress, setXrpAddress] = useState();
   const xrpWalletAddress = useWalletStore((state) => state.walletState);
+  const getWalletAddress = useWalletStore((state) => state.getWalletAddress);
   const postWalletAddress = useWalletStore((state) => state.postWalletAddress);
 
-
-  // useEffect(() => {
-  //     const fetchData = async () => {
-  //       const qry = new Parse.Query("MyClass")
-  //       qry.equalTo("shop", "");
-  //       console.log(await qry.find()); 
-  //     }
-  //     fetchData();
-  // });
-
+console.log(xrpWalletAddress);
   const onSubmitHandler = async (data) => {
     const walletAddress = data;
      const valid = WAValidator.validate(walletAddress, "ripple");
@@ -81,6 +73,7 @@ const SettingsRoute = () => {
   
 
   useEffect(() => {
+    getWalletAddress(shop);
     getScripts(shop);
   }, []);
 

@@ -31,6 +31,17 @@ import {
   ButtonGroup,
   InputGroup,
   InputLeftAddon,
+  Grid,
+  GridItem,
+  TableContainer,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  TableCaption,
+  Thead,
+  Th,
+  Tfoot,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { IoClose, IoAddOutline, IoCloseCircleOutline } from "react-icons/io5";
@@ -88,43 +99,59 @@ function CreateLooks(props) {
   const [looksPrice, setLooksPrice] = useState(props.looks.price);
   const [uploads, setUploads] = useState(props.looks.files || []);
   const [products, setProducts] = useState(props.looks.products || []);
+  const [totalProductsPrice, setTotlaProductsPrice] = useState("");
   const onUploadWidgetClose = (data = []) => {
     setUploads([...uploads, ...data]);
     onClose();
   };
 
   const onResourcePickerDone = (data = {}) => {
+    console.log(data)
     setProducts([
-      ...products.filter(Boolean),
+      // ...products.filter(Boolean),
       ...data?.selection
         ?.map((d) => {
           return {
             title: d.title,
-            image: (d.images[0] && d.images[0].originalSrc) || "",
+            image: (d.images[0] && d.images[0]?.originalSrc) || "",
             id: d.id,
+            price: parseInt(d.variants[0]?.price) || 0,
           };
         })
         .filter(Boolean),
     ]);
     onResourcePickerClose();
+    let productSum = 0;
+    const result = data.selection.reduce((p, n) => {
+      productSum = p + parseFloat(n.variants[0].price);
+      return productSum;
+    }, 0);
+    setTotlaProductsPrice(result);
   };
 
   const getLooskById = async () => {
     if (id) {
       const data = await getLooks({ id });
-      console.log("data is ", data);
       if (data) {
         setLooksName(data?.name);
         setUploads([...uploads, ...data?.medias]);
         setLooksPrice([data?.price]);
+        console.log('asdf ', data.products)
         setProducts([
           ...products,
           ...data?.products.map((p) => ({
             id: p.admin_graphql_api_id,
             title: p.title,
-            image: p.image.src,
+            image: p?.image?.src,
+            price: parseInt(p.variants[0]?.price) || 0,
           })),
         ]);
+        let productSum = 0;
+        const result = data.products.reduce((p, n) => {
+          productSum = p + parseFloat(n.variants[0].price);
+          return productSum;
+        }, 0);
+        setTotlaProductsPrice(result);
       }
     }
   };
@@ -141,6 +168,13 @@ function CreateLooks(props) {
   const removeProduct = (index) => {
     products.splice(index, 1);
     setProducts([...products.filter(Boolean)]);
+    // console.log(products);
+    let productSum = 0;
+    const result = products.reduce((p, n) => {
+      productSum = p + parseFloat(n.price);
+      return productSum;
+    }, 0);
+    setTotlaProductsPrice(result);
   };
 
   const onDestroyLook = async (lookId) => {
@@ -160,47 +194,27 @@ function CreateLooks(props) {
   };
   const renderProducts = () => {
     return products.map((product, index) => (
-      <Stack
-        id={product.id}
-        key={index}
-        justifyContent="space-between"
-        direction={"row"}
-        background="white"
-        padding="3"
-        borderRadius="lg"
-        marginBottom="4"
-        align={"center"}
-      >
-        <Flex flexDirection="row" alignItems="center">
-          <Flex
-            w={16}
-            h={16}
-            align={"center"}
-            justify={"center"}
-            rounded={"full"}
-          >
-            <Image
-              objectFit="contain"
-              width="100%"
-              height="100%"
-              src={product.image}
-              color={"yellow.500"}
-            />
-          </Flex>
-          <Flex direction="column">
-            <Text marginLeft="3" fontWeight={600}>
-              {product.title}
-            </Text>
-          </Flex>
-        </Flex>
-        <Icon
-          as={IoClose}
-          color={"red.500"}
-          w={5}
-          h={5}
-          onClick={() => removeProduct(index)}
-        />
-      </Stack>
+      <Tr>
+        <Td>
+          <Image
+            objectFit="contain"
+            boxSize='50px'
+            src={product.image}
+            color={"yellow.500"}
+          />
+        </Td>
+        <Td>{product.title}</Td>
+        <Td isNumeric>{product.price}</Td>
+        <Td textAlign={'center'}>
+          <Icon
+            as={IoClose}
+            color={"red.500"}
+            w={5}
+            h={5}
+            onClick={() => removeProduct(index)}
+          />
+        </Td>
+      </Tr>
     ));
   };
   const renderLooks = () => {
@@ -236,9 +250,7 @@ function CreateLooks(props) {
             >
               {data && data.name ? data.name : "Create a look"}
             </Heading>
-            <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}>
-              
-            </Text>
+            <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}></Text>
           </Stack>
           <Box mt={10}>
             <chakra.form
@@ -259,7 +271,6 @@ function CreateLooks(props) {
                       price: looksPrice,
                       medias: uploads,
                       products: products.map((product) => product.id),
-                      
                     });
                     try {
                       const scriptsOnStore = await getScripts(shop);
@@ -299,22 +310,6 @@ function CreateLooks(props) {
                   />
                 </FormControl>
 
-                <FormControl id="look-price">
-                  <FormLabel>Look Price</FormLabel>
-                  <InputGroup>
-                  <InputLeftAddon children='XRP' />
-                  <Input
-                    placeholder="100"
-                    name="look_price"
-                    type="text"
-                    value={looksPrice}
-                    onChange={(e) => setLooksPrice(e.target.value)}
-                    required
-                  />
-                  </InputGroup>
-                  
-                </FormControl>
-                
                 <FormControl>
                   <FormLabel>Add medias to this look</FormLabel>
                   <AvatarGroup>
@@ -378,10 +373,31 @@ function CreateLooks(props) {
                   <Upload isOpen={isOpen} onClose={onUploadWidgetClose} />
                 </FormControl>
                 <br />
-                <br/>
+                <br />
                 <FormControl id="look-products">
                   <FormLabel>Add products for this look</FormLabel>
-                  <Stack spacing={4}>{renderProducts()}</Stack>
+
+                  <TableContainer pb={'10px'}>
+                    <Table variant="striped" colorScheme={'gray'}>
+                      <Thead>
+                        <Tr>
+                          <Th>Product Image</Th>
+                          <Th>Product Name</Th>
+                          <Th isNumeric>Product Price</Th>
+                          <Th>Action</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>{renderProducts()}
+                      <Tr>
+                        <Td></Td>
+                        <Td isNumeric fontWeight={'bold'}>Total Product Price</Td>
+                        <Td isNumeric><Text size="14px" fontWeight={'bold'}>{totalProductsPrice}</Text></Td>
+                        <Td></Td>
+                      </Tr>
+                      </Tbody>
+                      
+                    </Table>
+                  </TableContainer>
                   <Button
                     fontFamily={"heading"}
                     bg={"gray.200"}
@@ -401,6 +417,22 @@ function CreateLooks(props) {
                       .map((product) => ({ id: product.id }))
                       .filter(Boolean)}
                   />
+                </FormControl>
+                <FormControl id="look-price">
+                  <FormLabel>
+                    Look Price in XRP for the above products
+                  </FormLabel>
+                  <InputGroup>
+                    <InputLeftAddon children="XRP" />
+                    <Input
+                      placeholder="100"
+                      name="look_price"
+                      type="text"
+                      value={looksPrice}
+                      onChange={(e) => setLooksPrice(e.target.value)}
+                      required
+                    />
+                  </InputGroup>
                 </FormControl>
               </Stack>
               <ButtonGroup mt={8} width="full">

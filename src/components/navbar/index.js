@@ -274,5 +274,9 @@ import {
     {
       label: 'Settings',
       href: '/settings'
+    },
+    {
+      label: 'Transaction Deatails',
+      href: '/transaction'
     }
   ];

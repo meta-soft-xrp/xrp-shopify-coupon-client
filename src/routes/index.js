@@ -11,6 +11,7 @@ import SettingsRoute from "./settings";
 import EmbedRoute from './embed';
 // You should always import these components even without using else app back navigation will break
 import { ClientRouter, useClientRouting, useRoutePropagation, RoutePropagator } from '@shopify/app-bridge-react';
+import TransactionRoute from './transaction';
 const AppRoutes = (props) => {
 
 
@@ -29,6 +30,7 @@ const AppRoutes = (props) => {
 			<Route path="/shopify/authorize" element={<Authorize />} /> */}
 			<Route path="/embed" element={<EmbedRoute />} />
 			<Route path="/settings" element={<SettingsRoute />} />
+			<Route path='/transaction' element={<TransactionRoute />} />
 			<Route path="/looks" element={<App />} />
 			<Route path="/looks/:id" element={<LookRoute />} />
 			<Route path="/looks/create" element={<LookRoute />} />

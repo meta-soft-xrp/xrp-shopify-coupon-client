@@ -31,14 +31,68 @@ const INITIAL_WALLET_STATE = {
 
 const useWalletStore = create((set, address) => ({
   walletState: INITIAL_WALLET_STATE,
-//   getWalletAddress: async ({shop}) => {
-//     try{
-//         const xrpAddress = new Parse.Query('Shop');
-//         xrpAddress.get(shop)
-//     } catch(e){
-//         console.log(error)
-//     }
-//   },
+  //   getWalletAddress: async ({shop}) => {
+  //     try{
+  //         const xrpAddress = new Parse.Query('Shop');
+  //         xrpAddress.get(shop)
+  //     } catch(e){
+  //         console.log(error)
+  //     }
+  //   },
+  getWalletAddress: async (shop) => {
+    set(
+      produce((state) => ({
+        ...state,
+        walletState: {
+          ...state.walletState,
+          get: {
+            ...INITIAL_WALLET_STATE.get,
+            loading: true,
+          },
+        },
+      }))
+    );
+
+    try {
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`
+      );
+      console.log(data);
+      set(
+        produce((state) => ({
+          ...state,
+          walletState: {
+            ...state.walletState,
+            get: {
+              ...INITIAL_WALLET_STATE.get,
+              success: {
+                ok: true,
+                data,
+              },
+            },
+          },
+        }))
+      );
+      return data;
+    } catch (e) {
+      set(
+        produce((state) => ({
+          ...state,
+          scripts: {
+            ...state.scripts,
+            get: {
+              ...INITIAL_WALLET_STATE.get,
+              failure: {
+                error: true,
+                message: e.message || INTERNAL_SERVER_ERROR,
+              },
+            },
+          },
+        }))
+      );
+      throw e;
+    }
+  },
   postWalletAddress: async ({ shop, walletAddress }) => {
     set(
       produce((state) => ({
@@ -55,50 +109,49 @@ const useWalletStore = create((set, address) => ({
     try {
       const { data } = await axios.post(
         `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/put_shop`,
-        { 
-            shop, 
-            walletAddress,
+        {
+          shop,
+          walletAddress,
         }
       );
-        console.log(data);
-        set(
-            produce((state) => ({
-                ...state,
-                walletState:{
-                    ...state.walletState,
-                    post:{
-                        ...INITIAL_WALLET_STATE.post,
-                        loading: false,
-                        success: {
-                            ok: true
-                        }
-                    }
-                }
-            }))
-        )
-        return data
-    
+      console.log(data);
+      set(
+        produce((state) => ({
+          ...state,
+          walletState: {
+            ...state.walletState,
+            post: {
+              ...INITIAL_WALLET_STATE.post,
+              loading: false,
+              success: {
+                ok: true,
+              },
+            },
+          },
+        }))
+      );
+      return data;
     } catch (error) {
       console.log(error);
       set(
         produce((state) => ({
-            ...state,
-            walletState: {
-                ...state.walletState,
-                post:{
-                    ...INITIAL_WALLET_STATE.post,
-                    loading:false,
-                    success: {
-                        ok: false,
-                    },
-                    failure: {
-                        error: false,
-                        message: "Please Verify the Wallet Address"
-                    }
-                }
-            }
+          ...state,
+          walletState: {
+            ...state.walletState,
+            post: {
+              ...INITIAL_WALLET_STATE.post,
+              loading: false,
+              success: {
+                ok: false,
+              },
+              failure: {
+                error: false,
+                message: "Please Verify the Wallet Address",
+              },
+            },
+          },
         }))
-      )
+      );
       throw error;
     }
   },
