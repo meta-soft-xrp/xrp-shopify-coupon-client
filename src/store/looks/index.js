@@ -108,7 +108,7 @@ const useLooksStore = create((set, get) => ({
 			})))
 		}
 	},
-	postLooks: async ({ id, shop = window.lookbook.shop, name, price, medias, products = [] }) => {
+	postLooks: async ({ id, shop = window.lookbook.shop, name, price, xrpPrice, medias, products = [] }) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -121,11 +121,12 @@ const useLooksStore = create((set, get) => ({
 		})))
 
 		try {
-			
+			console.log(xrpPrice);
 			const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_looks`, {
 				shop,
 				name,
 				price,
+				xrpPrice,
 				medias,
 				products,
 			});
@@ -162,7 +163,7 @@ const useLooksStore = create((set, get) => ({
 			throw e;
 		}
 	},
-	patchLooks: async ({ id, shop = window.lookbook.shop, name, price, medias, products = [] }) => {
+	patchLooks: async ({ id, shop = window.lookbook.shop, name, price, xrpPrice, medias, products = [] }) => {
 		set(produce(state => ({
 			...state,
 			looks: {
@@ -174,11 +175,13 @@ const useLooksStore = create((set, get) => ({
 			}
 		})))
 		try {
+			console.log(xrpPrice);
 			const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_looks`, {
 				id,
 				shop,
 				name,
 				price,
+				xrpPrice,
 				medias,
 				products
 			});

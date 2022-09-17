@@ -11,14 +11,33 @@ import {
   Td,
   VStack,
   Text,
-  Divider
+  Divider,
+  useColorMode,
+  Link,
 } from "@chakra-ui/react";
+import { useContext, useEffect, useState } from "react";
 import NavBar from "../../components/navbar";
+import { ShopContext } from "../../context";
+import useTransactionStore from "../../store/transaction";
 
 const TransactionRoute = () => {
+  const shop = useContext(ShopContext);
+  const transactionState = useTransactionStore(
+    (state) => state.transactionState
+  );
+  const getTransactionState = useTransactionStore(
+    (state) => state.getTransactionState
+  );
+
+  useEffect(async () => {
+    getTransactionState(shop);
+  }, []);
+
+  
+
   return (
     <>
-      <NavBar />
+      
       <Container
         maxW={"7xl"}
         p={[12, 6]}
@@ -27,37 +46,51 @@ const TransactionRoute = () => {
         textAlign={"left"}
       >
         <Box bg="white" width={"5xl"} m="auto" p={5} borderRadius="10px">
-            <VStack spacing={2} align="stretch">
-                <Box>
-                <Text size="xl" fontWeight="bold">XRP Transaction Details</Text>
-                <Divider borderColor='gray.200' />
-                </Box>
-            </VStack>
+          <VStack spacing={2} align="stretch">
+            <Box>
+              <Text size="xl" fontWeight="bold">
+                XRP Transaction Details
+              </Text>
+              <Divider borderColor="gray.200" />
+            </Box>
+          </VStack>
+          {/* {transactionState.get.success.data?.result?.transactions.map((details) => (
+           <Text>{details.tx.Account}</Text>
+         ))} */}
           <TableContainer p="5">
             <Table variant={"simple"}>
               <Thead>
                 <Tr>
-                  <Th>SL No</Th>
-                  <Th>into</Th>
-                  <Th isNumeric>multiply by</Th>
+                  <Th>Account</Th>
+                  <Th isNumeric>Amount</Th>
+                  <Th>Ledger Index</Th>
+                  <Th>Fee</Th>
+                  <Th>Transaction Ref</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>inches</Td>
-                  <Td>millimetres (mm)</Td>
-                  <Td isNumeric>25.4</Td>
-                </Tr>
-                <Tr>
-                  <Td>feet</Td>
-                  <Td>centimetres (cm)</Td>
-                  <Td isNumeric>30.48</Td>
-                </Tr>
-                <Tr>
-                  <Td>yards</Td>
-                  <Td>metres (m)</Td>
-                  <Td isNumeric>0.91444</Td>
-                </Tr>
+                {transactionState.get.success.data?.result?.transactions.map(
+                  (details) => (
+                    // <Text>{details.tx.Account}</Text>
+                    <Tr>
+                      <Td>{details.tx.Account}</Td>
+                      <Td isNumeric>
+                        {window.xrpl.dropsToXrp(details.tx.Amount)}
+                      </Td>
+                      <Td>{details.tx.inLedger}</Td>
+                      <Td>{details.tx.Fee}</Td>
+                      <Td>
+                        <Link
+                          color="teal"
+                          target="_blank"
+                          href={`${process.env.REACT_APP_XRP_TRANSACTION_REFFERENCE}transactions/${details.tx.hash}`}
+                        >
+                          {details.tx.hash}
+                        </Link>
+                      </Td>
+                    </Tr>
+                  )
+                )}
               </Tbody>
             </Table>
           </TableContainer>

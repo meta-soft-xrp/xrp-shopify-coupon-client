@@ -18,6 +18,8 @@ import {
   AlertIcon,
   SimpleGrid,
   FormErrorMessage,
+  Spinner,
+  SkeletonText,
 } from "@chakra-ui/react";
 import useScriptsStore from "../../store/scripts";
 import { ShopContext } from "../../context";
@@ -27,7 +29,7 @@ import { ErrorMessage, Form, useFormik } from "formik";
 import * as Yup from "yup";
 import WAValidator from "multicoin-address-validator";
 import useWalletStore from "../../store/wallet";
-import Parse from "parse";
+import axios from "axios";
 
 const SettingsRoute = () => {
   const shop = useContext(ShopContext);
@@ -37,45 +39,58 @@ const SettingsRoute = () => {
   const destroyScripts = useScriptsStore((state) => state.destroyScripts);
   const toast = useToast();
 
-  const [xrpAddress, setXrpAddress] = useState();
+  // const [xrpAddress, setXrpAddress] = useState();
   const xrpWalletAddress = useWalletStore((state) => state.walletState);
   const getWalletAddress = useWalletStore((state) => state.getWalletAddress);
   const postWalletAddress = useWalletStore((state) => state.postWalletAddress);
-
-console.log(xrpWalletAddress);
+  
   const onSubmitHandler = async (data) => {
     const walletAddress = data;
-     const valid = WAValidator.validate(walletAddress, "ripple");
-        if (valid === true) {
-          try {
-            await postWalletAddress({shop, walletAddress});
-            toast({
-              title: 'Wallet address added successfully!',
-              status: 'success',
-              duration: 3000,
-            })
-          } catch (e) {
-            toast({
-              title: e.message || "Something went wrong.",
-              status: 'error',
-              duration: 3000,
-            })
-          }
-        } else {
-          toast({
-            title: "Wallet Address is Invalid",
-            status: "error",
-          });
-        }
-    
-  };
 
-  
+    const valid = WAValidator.validate(walletAddress, "ripple");
+    if (valid === true) {
+      try {
+        await postWalletAddress({ shop, walletAddress });
+        toast({
+          title: "Wallet address added successfully!",
+          status: "success",
+          duration: 3000,
+        });
+      } catch (e) {
+        toast({
+          title: e.message || "Something went wrong.",
+          status: "error",
+          duration: 3000,
+        });
+      }
+    } else {
+      toast({
+        title: "Wallet Address is Invalid",
+        status: "error",
+      });
+    }
+  };
+  const walletSchema = Yup.object().shape({
+    walletAddress: Yup.string().required("Wallet Address Is required"),
+  });
+
+  const formik = useFormik({
+    initialValues: { walletAddress: "" },
+    validationSchema: walletSchema,
+    onSubmit: (values) => {
+      if (values) {
+        onSubmitHandler(values.walletAddress);
+      }
+    },
+  });
 
   useEffect(() => {
     getWalletAddress(shop);
     getScripts(shop);
   }, []);
+  useEffect(() => {
+      formik.setFieldValue("walletAddress", xrpWalletAddress?.get?.success?.data?.walletAddress || "")
+  }, [xrpWalletAddress?.get?.success?.data?.walletAddress])
 
   const enableWidget = async () => {
     try {
@@ -92,55 +107,59 @@ console.log(xrpWalletAddress);
       });
     }
   };
-
-  const walletSchema = Yup.object().shape({
-    walletAddress: Yup.string().required("Wallet Address Is required"),
-  });
-
   const XrpAddressInput = () => {
-    const formik = useFormik({
-      initialValues: { walletAddress: "" },
-      validationSchema: walletSchema,
-      onSubmit: (values) => {
-        if (values){
-          onSubmitHandler(values.walletAddress);
-        }
-       
-      },
-    });
-    return (
-      <Box>
-        <Text size="xl" fontWeight="bold" pb="5px">XRP wallet address where to receive XRP from customer</Text>
-        <FormControl onSubmit={formik.handleSubmit} isInvalid={formik.touched.walletAddress && formik.errors.walletAddress}>
-          <Input
-            id="walletAddress"
-            name="walletAddress"
-            type="text"
-            placeholder="XRP Wallet Address"
-            onChange={formik.handleChange}
-            value={formik.values.walletAddress}
-          />
-         
-          <FormHelperText size="sm" color={'red'}>
-            {formik.touched.walletAddress && formik.errors.walletAddress
-              ? formik.errors.walletAddress
-              : (<FormErrorMessage>Please check XRP wallet address where to receive XRP from customer</FormErrorMessage>) 
-              }
-          </FormHelperText>
-        </FormControl>
+    if (xrpWalletAddress.get.loading) {
+      return (
+        <Box width={'100%'} alignItems="center">
+          <SkeletonText mt='4' noOfLines={4} spacing='4' />
+        </Box>
+      );
+    } else if (xrpWalletAddress.get.success.ok) {
+      return (
+        <Box>
+          <Text size="xl" fontWeight="bold" pb="5px">
+            XRP wallet address where to receive XRP from customer
+          </Text>
+          <FormControl
+            onSubmit={formik.handleSubmit}
+            isInvalid={
+              formik.touched.walletAddress && formik.errors.walletAddress
+            }
+          >
+            <Input
+              id="walletAddress"
+              name="walletAddress"
+              type="text"
+              placeholder="XRP Wallet Address"
+              onChange={formik.handleChange}
+              value={formik.values.walletAddress}
+            />
 
-        <Button
-          mt={4}
-          onClick={formik.handleSubmit}
-          isLoading={xrpWalletAddress.post.loading}
-          type="submit"
-          size="sm"
-          colorScheme={"messenger"}
-        >
-          Submit
-        </Button>
-      </Box>
-    );
+            <FormHelperText size="sm" color={"red"}>
+              {formik.touched.walletAddress && formik.errors.walletAddress ? (
+                formik.errors.walletAddress
+              ) : (
+                <FormErrorMessage>
+                  Please check XRP wallet address where to receive XRP from
+                  customer
+                </FormErrorMessage>
+              )}
+            </FormHelperText>
+          </FormControl>
+
+          <Button
+            mt={4}
+            onClick={formik.handleSubmit}
+            isLoading={xrpWalletAddress.post.loading}
+            type="submit"
+            size="sm"
+            colorScheme={"messenger"}
+          >
+            Submit
+          </Button>
+        </Box>
+      );
+    }
   };
 
   const disableWidget = async () => {

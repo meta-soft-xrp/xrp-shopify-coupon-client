@@ -42,6 +42,11 @@ import {
   Thead,
   Th,
   Tfoot,
+  FormHelperText,
+  Alert,
+  AlertIcon,
+  InputRightAddon,
+  Spinner,
 } from "@chakra-ui/react";
 import { useParams, useNavigate } from "react-router-dom";
 import { IoClose, IoAddOutline, IoCloseCircleOutline } from "react-icons/io5";
@@ -55,6 +60,7 @@ import Upload from "../../components/upload";
 import useLooksStore from "../../store/looks";
 import { INTERNAL_SERVER_ERROR } from "../../constants/strings";
 import { ShopContext } from "../../context";
+import useCurrencyExchangeStore from "../../store/currency-exchage";
 
 const renderSkeleton = () => {
   return (
@@ -91,22 +97,40 @@ function CreateLooks(props) {
   const postScripts = useScriptsStore((state) => state.postScripts);
   const getScripts = useScriptsStore((state) => state.getScripts);
 
+  const currencyExchangeState = useCurrencyExchangeStore(
+    (state) => state.currencyExchangeState
+  );
+  const getCurrencyExchangeState = useCurrencyExchangeStore(
+    (state) => state.getCurrencyExchangeState
+  );
+
   const { id = "" } = useParams();
   const toast = useToast();
   const navigate = useNavigate();
   const colorMode = useColorModeValue("gray.100", "gray.700");
   const [looksName, setLooksName] = useState(props.looks.name);
   const [looksPrice, setLooksPrice] = useState(props.looks.price);
+  const [lookXrpPrice, setLookXrpPrice] = useState();
   const [uploads, setUploads] = useState(props.looks.files || []);
   const [products, setProducts] = useState(props.looks.products || []);
+  const [exchangeRate, setExchageRate] = useState();
+
   const [totalProductsPrice, setTotlaProductsPrice] = useState("");
   const onUploadWidgetClose = (data = []) => {
     setUploads([...uploads, ...data]);
     onClose();
   };
+console.log(currencyExchangeState.get.success.data.xrp)
+  console.log(exchangeRate);
+  const getExchangeRate = (data) => {
+    console.log(data);
+    setLookXrpPrice(
+      (currencyExchangeState.get.success.data.xrp * data).toFixed(2)
+    );
+  };
 
   const onResourcePickerDone = (data = {}) => {
-    console.log(data)
+    console.log(data);
     setProducts([
       // ...products.filter(Boolean),
       ...data?.selection
@@ -136,7 +160,7 @@ function CreateLooks(props) {
         setLooksName(data?.name);
         setUploads([...uploads, ...data?.medias]);
         setLooksPrice([data?.price]);
-        console.log('asdf ', data.products)
+        // console.log("asdf ", data.products);
         setProducts([
           ...products,
           ...data?.products.map((p) => ({
@@ -158,6 +182,7 @@ function CreateLooks(props) {
 
   useEffect(() => {
     getLooskById();
+    getCurrencyExchangeState();
   }, []);
 
   const removeUpload = (upload, index) => {
@@ -198,14 +223,14 @@ function CreateLooks(props) {
         <Td>
           <Image
             objectFit="contain"
-            boxSize='50px'
+            boxSize="50px"
             src={product.image}
             color={"yellow.500"}
           />
         </Td>
         <Td>{product.title}</Td>
         <Td isNumeric>{product.price}</Td>
-        <Td textAlign={'center'}>
+        <Td textAlign={"center"}>
           <Icon
             as={IoClose}
             color={"red.500"}
@@ -218,6 +243,25 @@ function CreateLooks(props) {
     ));
   };
   const renderLooks = () => {
+    if (currencyExchangeState.get.loading) {
+      return renderSkeleton();
+    } else if (currencyExchangeState.get.failure.error) {
+      <Box>
+      <Flex direction="column" align="center">
+        <VStack spacing="3">
+          <Heading as="h1" size="md">
+            {currencyExchangeState.get.failure.message}
+          </Heading>
+        </VStack>
+        <br />
+        <Divider />
+        <br />
+        <VStack spacing="3">
+          <Button onClick={() => getCurrencyExchangeState()}>Try Again</Button>
+        </VStack>
+      </Flex>
+    </Box>
+  } else {
     if (looks.get.loading) {
       return renderSkeleton();
     } else if (looks.get.failure.error) {
@@ -262,6 +306,7 @@ function CreateLooks(props) {
                       id,
                       name: looksName,
                       price: looksPrice,
+                      xrpPrice: lookXrpPrice,
                       medias: uploads,
                       products: products.map((product) => product.id),
                     });
@@ -269,6 +314,7 @@ function CreateLooks(props) {
                     await postLooks({
                       name: looksName,
                       price: looksPrice,
+                      xrpPrice: lookXrpPrice,
                       medias: uploads,
                       products: products.map((product) => product.id),
                     });
@@ -377,8 +423,8 @@ function CreateLooks(props) {
                 <FormControl id="look-products">
                   <FormLabel>Add products for this look</FormLabel>
 
-                  <TableContainer pb={'10px'}>
-                    <Table variant="striped" colorScheme={'gray'}>
+                  <TableContainer pb={"10px"}>
+                    <Table variant="striped" colorScheme={"gray"}>
                       <Thead>
                         <Tr>
                           <Th>Product Image</Th>
@@ -387,15 +433,21 @@ function CreateLooks(props) {
                           <Th>Action</Th>
                         </Tr>
                       </Thead>
-                      <Tbody>{renderProducts()}
-                      <Tr>
-                        <Td></Td>
-                        <Td isNumeric fontWeight={'bold'}>Total Product Price</Td>
-                        <Td isNumeric><Text size="14px" fontWeight={'bold'}>{totalProductsPrice}</Text></Td>
-                        <Td></Td>
-                      </Tr>
+                      <Tbody>
+                        {renderProducts()}
+                        <Tr>
+                          <Td></Td>
+                          <Td isNumeric fontWeight={"bold"}>
+                            Total Product Price
+                          </Td>
+                          <Td isNumeric>
+                            <Text size="14px" fontWeight={"bold"}>
+                              {totalProductsPrice}
+                            </Text>
+                          </Td>
+                          <Td></Td>
+                        </Tr>
                       </Tbody>
-                      
                     </Table>
                   </TableContainer>
                   <Button
@@ -419,20 +471,32 @@ function CreateLooks(props) {
                   />
                 </FormControl>
                 <FormControl id="look-price">
-                  <FormLabel>
-                    Look Price in XRP for the above products
-                  </FormLabel>
+                  <FormLabel>Add Price in USD for the above products</FormLabel>
                   <InputGroup>
-                    <InputLeftAddon children="XRP" />
+                    <InputLeftAddon children="USD" />
                     <Input
                       placeholder="100"
                       name="look_price"
                       type="text"
                       value={looksPrice}
-                      onChange={(e) => setLooksPrice(e.target.value)}
+                      onChange={(e) => {
+                        setLooksPrice(e.target.value)
+                      }}
+                      onBlur={(e) => getExchangeRate(e.target.value)}
                       required
                     />
+                    <InputRightAddon w={"50%"}>
+                      {currencyExchangeState.get.loading ? (
+                        <Spinner />
+                      ) : (
+                        `${lookXrpPrice ? lookXrpPrice : "0"} XRP`
+                      )}
+                    </InputRightAddon>
                   </InputGroup>
+                  <FormHelperText>
+                    The total number of XRP user has to pay to shop all of the
+                    above products in this look
+                  </FormHelperText>
                 </FormControl>
               </Stack>
               <ButtonGroup mt={8} width="full">
@@ -480,8 +544,9 @@ function CreateLooks(props) {
         </>
       );
     }
-    return null;
+  }
   };
+
 
   return (
     <>

@@ -31,14 +31,6 @@ const INITIAL_WALLET_STATE = {
 
 const useWalletStore = create((set, address) => ({
   walletState: INITIAL_WALLET_STATE,
-  //   getWalletAddress: async ({shop}) => {
-  //     try{
-  //         const xrpAddress = new Parse.Query('Shop');
-  //         xrpAddress.get(shop)
-  //     } catch(e){
-  //         console.log(error)
-  //     }
-  //   },
   getWalletAddress: async (shop) => {
     set(
       produce((state) => ({
@@ -54,10 +46,8 @@ const useWalletStore = create((set, address) => ({
     );
 
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`
-      );
-      console.log(data);
+      const {data} = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`);
+      // console.log(data);
       set(
         produce((state) => ({
           ...state,
@@ -67,7 +57,7 @@ const useWalletStore = create((set, address) => ({
               ...INITIAL_WALLET_STATE.get,
               success: {
                 ok: true,
-                data,
+                data: data,
               },
             },
           },
@@ -75,21 +65,6 @@ const useWalletStore = create((set, address) => ({
       );
       return data;
     } catch (e) {
-      set(
-        produce((state) => ({
-          ...state,
-          scripts: {
-            ...state.scripts,
-            get: {
-              ...INITIAL_WALLET_STATE.get,
-              failure: {
-                error: true,
-                message: e.message || INTERNAL_SERVER_ERROR,
-              },
-            },
-          },
-        }))
-      );
       throw e;
     }
   },
