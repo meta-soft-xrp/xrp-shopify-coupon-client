@@ -393,7 +393,7 @@ function Looks(props) {
         return (
           <Flex direction="column">
             <Text>
-              "Shop The Look" widget <b>has been added</b> to your store page.
+              "XRP Coupons" widget <b>has been added</b> to your store page.
               &nbsp;
             </Text>
             <Text
@@ -408,7 +408,7 @@ function Looks(props) {
       } else {
         return (
           <Text>
-            "Shop The Look" widget is <b>not added</b> to your store page.
+            "XRP Coupons" widget is <b>not added</b> to your store page.
           </Text>
         );
       }
@@ -497,7 +497,7 @@ function Looks(props) {
           >
             <Stack>
               <Text>
-                The Lookbook widget on your store has{" "}
+                The XRP Coupons widget on your store has{" "}
                 <b>{chargesState.get.success.data.views.count}</b> views{" "}
               </Text>
               <Text>

@@ -308,7 +308,7 @@ const EmbedRoute = (props) => {
                     }
                     isFullWidth
                   >
-                    Shop The Look
+                    XRP Coupons
                   </Button>
                 </Stack>
               </Box>

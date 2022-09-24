@@ -226,7 +226,7 @@ const SettingsRoute = () => {
                 Widget Embed Settings
               </Text>
               <Text mt="4" fontSize="sm">
-                Enable or disable "Shop the look" widget on your store. The
+                Enable or disable "XRP Coupons" widget on your store. The
                 widget gets appended to the bottom of your store page above the
                 footer on the home page.
               </Text>
