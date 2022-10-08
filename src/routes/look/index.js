@@ -120,7 +120,7 @@ function CreateLooks(props) {
     setUploads([...uploads, ...data]);
     onClose();
   };
-console.log(currencyExchangeState.get.success.data.xrp)
+  console.log(currencyExchangeState.get.success.data.xrp);
   console.log(exchangeRate);
   const getExchangeRate = (data) => {
     console.log(data);
@@ -247,311 +247,324 @@ console.log(currencyExchangeState.get.success.data.xrp)
       return renderSkeleton();
     } else if (currencyExchangeState.get.failure.error) {
       <Box>
-      <Flex direction="column" align="center">
-        <VStack spacing="3">
-          <Heading as="h1" size="md">
-            {currencyExchangeState.get.failure.message}
-          </Heading>
-        </VStack>
-        <br />
-        <Divider />
-        <br />
-        <VStack spacing="3">
-          <Button onClick={() => getCurrencyExchangeState()}>Try Again</Button>
-        </VStack>
-      </Flex>
-    </Box>
-  } else {
-    if (looks.get.loading) {
-      return renderSkeleton();
-    } else if (looks.get.failure.error) {
-      return (
-        <Box>
-          <Flex direction="column" align="center">
-            <VStack spacing="3">
-              <Heading as="h1" size="md">
-                {looks.get.failure.message}
-              </Heading>
-            </VStack>
-            <br />
-            <Divider />
-            <br />
-            <VStack spacing="3">
-              <Button onClick={() => getLooskById()}>Try Again</Button>
-            </VStack>
-          </Flex>
-        </Box>
-      );
-    } else {
-      const { data } = looks?.get?.success;
-      return (
-        <>
-          <Stack spacing={4}>
-            <Heading
-              color={"gray.800"}
-              lineHeight={1.1}
-              fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
-            >
-              {data && data.name ? data.name : "Create a look"}
+        <Flex direction="column" align="center">
+          <VStack spacing="3">
+            <Heading as="h1" size="md">
+              {currencyExchangeState.get.failure.message}
             </Heading>
-            <Text color={"gray.500"} fontSize={{ base: "sm", sm: "md" }}></Text>
-          </Stack>
-          <Box mt={10}>
-            <chakra.form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                try {
-                  if (id) {
-                    await patchLooks({
-                      id,
-                      name: looksName,
-                      price: looksPrice,
-                      xrpPrice: lookXrpPrice,
-                      medias: uploads,
-                      products: products.map((product) => product.id),
-                    });
-                  } else {
-                    await postLooks({
-                      name: looksName,
-                      price: looksPrice,
-                      xrpPrice: lookXrpPrice,
-                      medias: uploads,
-                      products: products.map((product) => product.id),
-                    });
-                    try {
-                      const scriptsOnStore = await getScripts(shop);
-                      if (scriptsOnStore && scriptsOnStore.length) {
-                        // already has a script tag, do nothing.
-                      } else {
-                        await postScripts(shop);
+          </VStack>
+          <br />
+          <Divider />
+          <br />
+          <VStack spacing="3">
+            <Button onClick={() => getCurrencyExchangeState()}>
+              Try Again
+            </Button>
+          </VStack>
+        </Flex>
+      </Box>;
+    } else {
+      if (looks.get.loading) {
+        return renderSkeleton();
+      } else if (looks.get.failure.error) {
+        return (
+          <Box>
+            <Flex direction="column" align="center">
+              <VStack spacing="3">
+                <Heading as="h1" size="md">
+                  {looks.get.failure.message}
+                </Heading>
+              </VStack>
+              <br />
+              <Divider />
+              <br />
+              <VStack spacing="3">
+                <Button onClick={() => getLooskById()}>Try Again</Button>
+              </VStack>
+            </Flex>
+          </Box>
+        );
+      } else {
+        const { data } = looks?.get?.success;
+        return (
+          <>
+            <Stack spacing={4}>
+              <Heading
+                color={"gray.800"}
+                lineHeight={1.1}
+                fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
+              >
+                {data && data.name ? data.name : "Create a XRP curation"}
+              </Heading>
+              <Text
+                color={"gray.500"}
+                fontSize={{ base: "sm", sm: "md" }}
+              ></Text>
+            </Stack>
+            <Box mt={10}>
+              <chakra.form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    if (id) {
+                      await patchLooks({
+                        id,
+                        name: looksName,
+                        price: looksPrice,
+                        xrpPrice: lookXrpPrice,
+                        medias: uploads,
+                        products: products.map((product) => product.id),
+                      });
+                    } else {
+                      await postLooks({
+                        name: looksName,
+                        price: looksPrice,
+                        xrpPrice: lookXrpPrice,
+                        medias: uploads,
+                        products: products.map((product) => product.id),
+                      });
+                      try {
+                        const scriptsOnStore = await getScripts(shop);
+                        if (scriptsOnStore && scriptsOnStore.length) {
+                          // already has a script tag, do nothing.
+                        } else {
+                          await postScripts(shop);
+                        }
+                        window.history.back();
+                      } catch (e) {
+                        window.history.back();
                       }
-                      window.history.back();
-                    } catch (e) {
-                      window.history.back();
                     }
+                    toast({
+                      title: `Looks ${
+                        id ? "updated" : "created"
+                      } successfully!`,
+                      status: "success",
+                    });
+                  } catch (e) {
+                    toast({
+                      title: e.message || INTERNAL_SERVER_ERROR,
+                      status: "error",
+                    });
                   }
-                  toast({
-                    title: `Looks ${id ? "updated" : "created"} successfully!`,
-                    status: "success",
-                  });
-                } catch (e) {
-                  toast({
-                    title: e.message || INTERNAL_SERVER_ERROR,
-                    status: "error",
-                  });
-                }
-              }}
-              {...props}
-            >
-              <Stack spacing={4}>
-                <FormControl id="look-name">
-                  <FormLabel>Look name</FormLabel>
-                  <Input
-                    placeholder="Winter Fashion Look"
-                    name="look_name"
-                    type="text"
-                    value={looksName}
-                    onChange={(e) => setLooksName(e.target.value)}
-                    required
-                  />
-                </FormControl>
+                }}
+                {...props}
+              >
+                <Stack spacing={4}>
+                  <FormControl id="look-name">
+                    <FormLabel>Curation name</FormLabel>
+                    <Input
+                      placeholder="XRP event must have"
+                      name="look_name"
+                      type="text"
+                      value={looksName}
+                      onChange={(e) => setLooksName(e.target.value)}
+                      required
+                    />
+                  </FormControl>
 
-                <FormControl>
-                  <FormLabel>Add medias to this look</FormLabel>
-                  <AvatarGroup>
-                    {uploads.map((upload, index) => (
+                  <FormControl>
+                    <FormLabel>Add medias to this curation</FormLabel>
+                    <AvatarGroup>
+                      {uploads.map((upload, index) => (
+                        <Avatar
+                          key={(upload._name || upload.name) + index}
+                          name={upload._name || upload.name}
+                          src={upload._url || upload.url}
+                          size="lg"
+                          // size={useBreakpointValue({ base: 'md', md: 'lg' })}
+                          position={"relative"}
+                          zIndex={2}
+                          _before={{
+                            content: '""',
+                            width: "full",
+                            height: "full",
+                            rounded: "full",
+                            transform: "scale(1.125)",
+                            bgGradient: "linear(to-bl, #7919FF,#7919FF)",
+                            position: "absolute",
+                            zIndex: -1,
+                            top: 0,
+                            left: 0,
+                          }}
+                        >
+                          <AvatarBadge
+                            boxSize="1.25em"
+                            bg="#7919FF"
+                            onClick={() => removeUpload(upload, index)}
+                          >
+                            <Icon
+                              as={IoCloseCircleOutline}
+                              color={"white.500"}
+                              w={5}
+                              h={5}
+                            />
+                          </AvatarBadge>
+                        </Avatar>
+                      ))}
                       <Avatar
-                        key={(upload._name || upload.name) + index}
-                        name={upload._name || upload.name}
-                        src={upload._url || upload.url}
+                        onClick={onOpen}
                         size="lg"
-                        // size={useBreakpointValue({ base: 'md', md: 'lg' })}
-                        position={"relative"}
-                        zIndex={2}
+                        bg={"#7919FF"}
+                        _hover={{ bg: "#7919FF" }}
+                        cursor="pointer"
+                        icon={<IoAddOutline size="2em" color="white" />}
                         _before={{
                           content: '""',
                           width: "full",
                           height: "full",
                           rounded: "full",
-                          transform: "scale(1.125)",
-                          bgGradient: "linear(to-bl, red.400,pink.400)",
+                          transform: "scale(1.2)",
+                          bgGradient: "linear(to-bl, #7919FF, #7919FF)",
                           position: "absolute",
                           zIndex: -1,
                           top: 0,
                           left: 0,
                         }}
-                      >
-                        <AvatarBadge
-                          boxSize="1.25em"
-                          bg="red.500"
-                          onClick={() => removeUpload(upload, index)}
-                        >
-                          <Icon
-                            as={IoCloseCircleOutline}
-                            color={"white.500"}
-                            w={5}
-                            h={5}
-                          />
-                        </AvatarBadge>
-                      </Avatar>
-                    ))}
-                    <Avatar
-                      onClick={onOpen}
-                      size="lg"
-                      bg={"pink.400"}
-                      _hover={{ bg: "pink.300" }}
-                      cursor="pointer"
-                      icon={<IoAddOutline size="2em" color="white" />}
-                      _before={{
-                        content: '""',
-                        width: "full",
-                        height: "full",
-                        rounded: "full",
-                        transform: "scale(1.2)",
-                        bgGradient: "linear(to-bl, red.400,pink.400)",
-                        position: "absolute",
-                        zIndex: -1,
-                        top: 0,
-                        left: 0,
-                      }}
-                    ></Avatar>
-                  </AvatarGroup>
-                  <Upload isOpen={isOpen} onClose={onUploadWidgetClose} />
-                </FormControl>
-                <br />
-                <br />
-                <FormControl id="look-products">
-                  <FormLabel>Add products for this look</FormLabel>
+                      ></Avatar>
+                    </AvatarGroup>
+                    <Upload isOpen={isOpen} onClose={onUploadWidgetClose} />
+                  </FormControl>
+                  <br />
+                  <br />
+                  <FormControl id="look-products">
+                    <FormLabel>Add products for this curation</FormLabel>
 
-                  <TableContainer pb={"10px"}>
-                    <Table variant="striped" colorScheme={"gray"}>
-                      <Thead>
-                        <Tr>
-                          <Th>Product Image</Th>
-                          <Th>Product Name</Th>
-                          <Th isNumeric>Product Price</Th>
-                          <Th>Action</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {renderProducts()}
-                        <Tr>
-                          <Td></Td>
-                          <Td isNumeric fontWeight={"bold"}>
-                            Total Product Price
-                          </Td>
-                          <Td isNumeric>
-                            <Text size="14px" fontWeight={"bold"}>
-                              {totalProductsPrice}
-                            </Text>
-                          </Td>
-                          <Td></Td>
-                        </Tr>
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                  <Button
-                    fontFamily={"heading"}
-                    bg={"gray.200"}
-                    color={"gray.800"}
-                    onClick={onResourcePickerOpen}
-                  >
-                    Link products +
-                  </Button>
-                  <ResourcePicker
-                    onSelection={onResourcePickerDone}
-                    onCancel={onResourcePickerClose}
-                    selectMultiple
-                    showVariants={false}
-                    resourceType="Product"
-                    open={isResourcePickerOpen}
-                    initialSelectionIds={products
-                      .map((product) => ({ id: product.id }))
-                      .filter(Boolean)}
-                  />
-                </FormControl>
-                <FormControl id="look-price">
-                  <FormLabel>Add Price in USD for the above products</FormLabel>
-                  <InputGroup>
-                    <InputLeftAddon children="USD" />
-                    <Input
-                      placeholder="100"
-                      name="look_price"
-                      type="text"
-                      value={looksPrice}
-                      onChange={(e) => {
-                        setLooksPrice(e.target.value)
-                      }}
-                      onBlur={(e) => getExchangeRate(e.target.value)}
-                      required
+                    <TableContainer pb={"10px"}>
+                      <Table variant="striped" colorScheme={"gray"}>
+                        <Thead>
+                          <Tr>
+                            <Th>Product Image</Th>
+                            <Th>Product Name</Th>
+                            <Th isNumeric>Product Price</Th>
+                            <Th>Action</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {renderProducts()}
+                          {totalProductsPrice ? (
+                            <Tr>
+                              <Td></Td>
+                              <Td isNumeric fontWeight={"bold"}>
+                                Total Product Price
+                              </Td>
+                              <Td isNumeric>
+                                <Text size="14px" fontWeight={"bold"}>
+                                  {totalProductsPrice}
+                                </Text>
+                              </Td>
+                              <Td></Td>
+                            </Tr>
+                          ) : null}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                    <Button
+                      fontFamily={"heading"}
+                      bg={"gray.200"}
+                      color={"gray.800"}
+                      onClick={onResourcePickerOpen}
+                    >
+                      Link products +
+                    </Button>
+                    <ResourcePicker
+                      onSelection={onResourcePickerDone}
+                      onCancel={onResourcePickerClose}
+                      selectMultiple
+                      showVariants={false}
+                      resourceType="Product"
+                      open={isResourcePickerOpen}
+                      initialSelectionIds={products
+                        .map((product) => ({ id: product.id }))
+                        .filter(Boolean)}
                     />
-                    <InputRightAddon w={"50%"}>
-                      {currencyExchangeState.get.loading ? (
-                        <Spinner />
-                      ) : (
-                        `${lookXrpPrice ? lookXrpPrice : "0"} XRP`
-                      )}
-                    </InputRightAddon>
-                  </InputGroup>
-                  <FormHelperText>
-                    The total number of XRP user has to pay to shop all of the
-                    above products in this look
-                  </FormHelperText>
-                </FormControl>
-              </Stack>
-              <ButtonGroup mt={8} width="full">
-                {data && data.objectId ? (
+                  </FormControl>
+                  <FormControl id="look-price">
+                    <FormLabel>
+                      Add Price in USD for the above products. Your customers
+                      will be able to buy all the products tagged in this
+                      curation by paying via XRP.
+                    </FormLabel>
+                    <InputGroup>
+                      <InputLeftAddon children="USD" />
+                      <Input
+                        placeholder="100"
+                        name="look_price"
+                        type="text"
+                        value={looksPrice}
+                        onChange={(e) => {
+                          setLooksPrice(e.target.value);
+                        }}
+                        onBlur={(e) => getExchangeRate(e.target.value)}
+                        required
+                      />
+                      <InputRightAddon w={"50%"}>
+                        {currencyExchangeState.get.loading ? (
+                          <Spinner />
+                        ) : (
+                          `${lookXrpPrice ? lookXrpPrice : "0"} XRP`
+                        )}
+                      </InputRightAddon>
+                    </InputGroup>
+                    <FormHelperText>
+                      The total number of XRP user has to pay to shop all of the
+                      above products in this look. Please add a discounted price
+                      to encourage community.
+                    </FormHelperText>
+                  </FormControl>
+                </Stack>
+                <ButtonGroup mt={8} width="full">
+                  {data && data.objectId ? (
+                    <Button
+                      isLoading={looks.destroy.loading}
+                      onClick={() => onDestroyLook(data.objectId)}
+                      isFullWidth
+                      variant="ghost"
+                      colorScheme="red"
+                    >
+                      Delete Look
+                    </Button>
+                  ) : null}
                   <Button
-                    isLoading={looks.destroy.loading}
-                    onClick={() => onDestroyLook(data.objectId)}
+                    isLoading={
+                      looks.post.loading ||
+                      looks.patch.loading ||
+                      scripts.get.loading ||
+                      scripts.post.loading
+                    }
+                    disabled={
+                      looks.post.loading ||
+                      looks.patch.loading ||
+                      scripts.get.loading ||
+                      scripts.post.loading
+                    }
+                    loadingText={`${id ? "Updating" : "Saving"} curation`}
+                    type="submit"
+                    fontFamily={"heading"}
                     isFullWidth
-                    variant="ghost"
-                    colorScheme="red"
+                    w={"full"}
+                    bgGradient="linear(to-r, #c8ae01,#fc73a3)"
+                    color={"white"}
+                    _hover={{
+                      bgGradient: "linear(to-r, #c8ae01,#fc73a3)",
+                      boxShadow: "xl",
+                    }}
                   >
-                    Delete Look
+                    {`${id ? "Update" : "Save"} curation`}
                   </Button>
-                ) : null}
-                <Button
-                  isLoading={
-                    looks.post.loading ||
-                    looks.patch.loading ||
-                    scripts.get.loading ||
-                    scripts.post.loading
-                  }
-                  disabled={
-                    looks.post.loading ||
-                    looks.patch.loading ||
-                    scripts.get.loading ||
-                    scripts.post.loading
-                  }
-                  loadingText={`${id ? "Updating" : "Saving"} look`}
-                  type="submit"
-                  fontFamily={"heading"}
-                  isFullWidth
-                  w={"full"}
-                  bgGradient="linear(to-r, red.400,pink.400)"
-                  color={"white"}
-                  _hover={{
-                    bgGradient: "linear(to-r, red.400,pink.400)",
-                    boxShadow: "xl",
-                  }}
-                >
-                  {`${id ? "Update" : "Save"} look`}
-                </Button>
-              </ButtonGroup>
-            </chakra.form>
-          </Box>
-        </>
-      );
+                </ButtonGroup>
+              </chakra.form>
+            </Box>
+          </>
+        );
+      }
     }
-  }
   };
-
 
   return (
     <>
       <NavBar />
-      <Box position={"relative"} bg="#ccc">
+      <Box position={"relative"}>
         <Container
           as={SimpleGrid}
           maxW={"7xl"}
@@ -594,13 +607,13 @@ export const Blur = (props) => {
       xmlns="http://www.w3.org/2000/svg"
       {...props}
     >
-      <circle cx="71" cy="61" r="111" fill="#F56565" />
-      <circle cx="244" cy="106" r="139" fill="#ED64A6" />
-      <circle cy="291" r="139" fill="#ED64A6" />
-      <circle cx="80.5" cy="189.5" r="101.5" fill="#ED8936" />
-      <circle cx="196.5" cy="317.5" r="101.5" fill="#ECC94B" />
-      <circle cx="70.5" cy="458.5" r="101.5" fill="#48BB78" />
-      <circle cx="426.5" cy="-0.5" r="101.5" fill="#4299E1" />
+      <circle cx="71" cy="61" r="111" fill="#7919FF" />
+      <circle cx="244" cy="106" r="139" fill="#28b86a" />
+      <circle cy="291" r="139" fill="#7919FF" />
+      <circle cx="80.5" cy="189.5" r="101.5" fill="#ff6719" />
+      <circle cx="196.5" cy="317.5" r="101.5" fill="#7919FF" />
+      <circle cx="70.5" cy="458.5" r="101.5" fill="#e24cff" />
+      <circle cx="426.5" cy="-0.5" r="101.5" fill="#7919FF" />
     </Icon>
   );
 };

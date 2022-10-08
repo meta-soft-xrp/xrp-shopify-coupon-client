@@ -85,7 +85,7 @@ function Upload(props = {}) {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add images for this look.</ModalHeader>
+        <ModalHeader>Add images for this curation.</ModalHeader>
         <ModalBody>
           <Center
             p={10}
