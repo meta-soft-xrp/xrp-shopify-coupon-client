@@ -4,7 +4,7 @@ Below you will find some information on how to perform common tasks.
 
 ## Demo
 
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/HlNEriQgSpc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  ![](https://youtu.be/HlNEriQgSpc)
 
 
 ## Creating look To Shop
