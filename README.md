@@ -4,7 +4,7 @@ Below you will find some information on how to perform common tasks.
 
 ## Demo
 
-  ![](https://youtu.be/HlNEriQgSpc)
+  ![Youtube](https://youtu.be/HlNEriQgSpc)
 
 
 ## Creating look To Shop
