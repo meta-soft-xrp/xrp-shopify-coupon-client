@@ -1,72 +1,262 @@
-# README coming in few hours
+## XRP Shop Client
+This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+Below you will find some information on how to perform common tasks.
 
-# Getting Started with Create React App
+## Creating look To Shop
+<tabnle>
+<tr>
+<td><img src="./public/create_look.png" width="300" /></td>
+</tr>
+</table>
+```
+|- src
+    |-- routes
+        |-- look
+```
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+- Add look name 
+- Add media to look
+    - on click of add media to look will open the popup
+    - you can drag and drop imagges to upload, once click on upload following codes will be send API request to upload files
+<tabnle>
+<tr>
+<td><img src="./public/add_media.png" width="300" /></td>
+</tr>
+</table>
 
-## Available Scripts
 
-In the project directory, you can run:
 
-### `npm start`
+```
+const files = useFilesStore((state) => state.files);
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+const onUploadWidgetClose = (data = []) => {
+    setUploads([...uploads, ...data]);
+    onClose();
+  };
+```
+```
+|- src
+    |-- store
+        |-- files
+```
+```
+const base64s = await Promise.all(
+        uploads.map(async (upload) => {
+          return {
+            data: await getBase64(upload),
+            type: upload.type,
+          };
+        })
+      );
+      const savedFiles = await Promise.all(
+        base64s.map(async (base64) => {
+          const parseFile = new Parse.File(
+            "looks",
+            { base64: base64.data },
+            base64.type
+          );
+          // const savedFile = await parseFile.save();
+          const { data } = await axios.post(
+            `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/parse/files/looks`,
+            {
+              base64: parseFile?._source?.base64 || parseFile._data,
+              _ApplicationId: Parse.applicationId,
+              _ClientVersion: "js3.4.1",
+              _ContentType: parseFile?._source?.type,
+              _JavaScriptKey: Parse.javaScriptKey,
+              fileData: { metadata: {}, tags: {} },
+            },
+            {
+              headers: {
+                "content-type": "text/plain",
+              },
+            }
+          );
+          return data;
+        })
+      );
+```
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+- Link Product to look
+    - Products from the Shopify will be fetched throug [Shopify app bridge](https://www.npmjs.com/package/@shopify/app-bridge-react).
 
-### `npm test`
+<table>
+<tr>
+<td><img src="./public/add_product.png" width="300" /></td>
+</tr>
+</table>
+```
+setProducts([
+      // ...products.filter(Boolean),
+      ...data?.selection
+        ?.map((d) => {
+          return {
+            title: d.title,
+            image: (d.images[0] && d.images[0]?.originalSrc) || "",
+            id: d.id,
+            price: parseInt(d.variants[0]?.price) || 0,
+          };
+        })
+        .filter(Boolean),
+    ]);
+```
+- once the products are selected product total valus will be calculated 
+<table>
+<tr>
+<td><img src="./public/product_price.png" width="300" /></td>
+</tr>
+</table>
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+const [products, setProducts] = useState(props.looks.products || []);
 
-### `npm run build`
+let productSum = 0;
+    const result = data.selection.reduce((p, n) => {
+      productSum = p + parseFloat(n.variants[0].price);
+      return productSum;
+    }, 0);
+    setTotlaProductsPrice(result);
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Adding discount price for the look in USD and calculating XRP value
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- Fetch the XRP value using API
+```
+|- src
+    |-- store
+        |-- currency-exchage
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const response = await axios.get('https://api.coingecko.com/api/v3/simple/price?ids=usd&vs_currencies=xrp')
+```
+- set the XRP value to 0 initially, and calculate the the XRP price
+<table>
+<tr>
+<td><img src="./public/add_look_price.png" width="600" /></td>
+</tr>
+</table>
 
-### `npm run eject`
+```
+const [exchangeRate, setExchageRate] = useState();
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+const getExchangeRate = (data) => {
+    console.log(data);
+    setLookXrpPrice( 
+      (currencyExchangeState.get.success.data.xrp * data).toFixed(2)
+    );
+  };
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Saving the look 
+    - parse the data to save the look
+```
+await postLooks({
+ name: looksName,
+ price: looksPrice,
+ xrpPrice: lookXrpPrice,
+ medias: uploads,
+ products: products.map((product) => product.id),
+ });
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+ const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_looks`, 
+ {
+    shop,
+    name,
+    price,
+    xrpPrice,
+    medias,
+    products,
+});
+```
 
-## Learn More
+- Displaying the look data
+```
+|- src
+    |-- routes
+        |-- index.js
+```
+## Display Looks using the API
+<table>
+<tr>
+<td><img src="./public/display_looks.png" width="600" /></td>
+</tr>
+</table>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```
+const { data } = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_looks?shop=${shop}&id=${id}`);
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Adding XRP Wallet Address
+<table>
+<tr>
+<td><img src="./public/wallet_address.png" /></td>
+</tr>
+</table>
 
-### Code Splitting
+- Validate Wallet address Using the [Multicoin Address Validator](https://www.npmjs.com/package/multicoin-address-validator).
+    - Parse the validated data to save Using API 
+    - for testnet XRP wallet address details refer [XRPL official website](https://xrpl.org)
+```
+const valid = WAValidator.validate(walletAddress, "ripple");
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/put_shop`,
+{
+  shop,
+  walletAddress,
+});
+```
 
-### Analyzing the Bundle Size
+## Display XRP Transaction detaills 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+<table>
+<tr>
+<td>
+<img src="./public/transaction.png" />
+</td>
+</tr>
+</table>
 
-### Making a Progressive Web App
+- Parse the Wallet address to API to get the transaction details
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+try {
+      const {data} = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`);
+      const walletAddress = data.walletAddress;
 
-### Advanced Configuration
+      const client = new window.xrpl.Client(`${process.env.REACT_APP_XRP_TRANSACTION_FETCH_UTL}`);
+      await client.connect();
+      const response = await client.request({
+        command: "account_tx",
+        account: walletAddress,
+      });
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Embed Widget to display in frontend
 
-### Deployment
+<table>
+<tr>
+<td><img src="./public/embed.png" /></td>
+</tr>
+</table>
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```
+const enableWidget = async () => {
+    try {
+      await postScripts(shop);
+      toast({
+        title: `Widget added successfully! Please visit your online store after 30 seconds to check the widget.`,
+        status: "success",
+      });
+      getScripts(shop);
+    } catch (e) {
+      toast({
+        title: e.message || INTERNAL_SERVER_ERROR,
+        status: "error",
+      });
+    }
+  };
 
-### `npm run build` fails to minify
+  const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/post_scripts`, { shop });
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```
+
