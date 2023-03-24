@@ -43,7 +43,7 @@ const SettingsRoute = () => {
   const xrpWalletAddress = useWalletStore((state) => state.walletState);
   const getWalletAddress = useWalletStore((state) => state.getWalletAddress);
   const postWalletAddress = useWalletStore((state) => state.postWalletAddress);
-  
+
   const onSubmitHandler = async (data) => {
     const walletAddress = data;
 
@@ -89,8 +89,11 @@ const SettingsRoute = () => {
     getScripts(shop);
   }, []);
   useEffect(() => {
-      formik.setFieldValue("walletAddress", xrpWalletAddress?.get?.success?.data?.walletAddress || "")
-  }, [xrpWalletAddress?.get?.success?.data?.walletAddress])
+    formik.setFieldValue(
+      "walletAddress",
+      xrpWalletAddress?.get?.success?.data?.walletAddress || ""
+    );
+  }, [xrpWalletAddress?.get?.success?.data?.walletAddress]);
 
   const enableWidget = async () => {
     try {
@@ -110,15 +113,15 @@ const SettingsRoute = () => {
   const XrpAddressInput = () => {
     if (xrpWalletAddress.get.loading) {
       return (
-        <Box width={'100%'} alignItems="center">
-          <SkeletonText mt='4' noOfLines={4} spacing='4' />
+        <Box width={"100%"} alignItems="center">
+          <SkeletonText mt="4" noOfLines={4} spacing="4" />
         </Box>
       );
     } else if (xrpWalletAddress.get.success.ok) {
       return (
         <Box>
           <Text size="xl" fontWeight="bold" pb="5px">
-            XRP wallet address where to receive XRP from customer
+            XRP wallet public address where you would receive XRP from customers
           </Text>
           <FormControl
             onSubmit={formik.handleSubmit}
@@ -141,7 +144,7 @@ const SettingsRoute = () => {
               ) : (
                 <FormErrorMessage>
                   Please check XRP wallet address where to receive XRP from
-                  customer
+                  customers
                 </FormErrorMessage>
               )}
             </FormHelperText>
@@ -226,9 +229,9 @@ const SettingsRoute = () => {
                 Widget Embed Settings
               </Text>
               <Text mt="4" fontSize="sm">
-                Enable or disable "XRP Coupons" widget on your store. The
-                widget gets appended to the bottom of your store page above the
-                footer on the home page.
+                Enable or disable "XRP Coupons" widget on your store. The widget
+                gets appended to the bottom of your store page above the footer
+                on the home page.
               </Text>
               <ButtonGroup mt="4" spacing="6">
                 {renderButton()}
@@ -245,7 +248,7 @@ const SettingsRoute = () => {
                   </Box>
                   <Box>
                     <Code
-                      children={`<div id="frangout-shop-look-app"> </div>`}
+                      children={`<div id="xrp-shop-curation-app"> </div>`}
                     ></Code>
                   </Box>
                 </SimpleGrid>

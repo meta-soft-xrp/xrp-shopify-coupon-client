@@ -294,12 +294,11 @@ function CreateLooks(props) {
                 lineHeight={1.1}
                 fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
               >
-                {data && data.name ? data.name : "Create a XRP curation"}
+                {data && data.name ? data.name : "Create a shoppable curation"}
               </Heading>
-              <Text
-                color={"gray.500"}
-                fontSize={{ base: "sm", sm: "md" }}
-              ></Text>
+              <Heading size="sm">
+                Items in this curation can be bought by paying with XRP
+              </Heading>
             </Stack>
             <Box mt={10}>
               <chakra.form
@@ -352,9 +351,9 @@ function CreateLooks(props) {
               >
                 <Stack spacing={4}>
                   <FormControl id="look-name">
-                    <FormLabel>Curation name</FormLabel>
+                    <FormLabel>Give this curation a name</FormLabel>
                     <Input
-                      placeholder="XRP event must have"
+                      placeholder="XRP Meetup Looks For Developers"
                       name="look_name"
                       type="text"
                       value={looksName}
@@ -364,7 +363,10 @@ function CreateLooks(props) {
                   </FormControl>
 
                   <FormControl>
-                    <FormLabel>Add medias to this curation</FormLabel>
+                    <FormLabel>
+                      Add pictures for the kind of fashion and looks buyers can
+                      create by shopping for items in this curation.
+                    </FormLabel>
                     <AvatarGroup>
                       {uploads.map((upload, index) => (
                         <Avatar
@@ -428,7 +430,10 @@ function CreateLooks(props) {
                   <br />
                   <br />
                   <FormControl id="look-products">
-                    <FormLabel>Add products for this curation</FormLabel>
+                    <FormLabel>
+                      Select products from your store that customers should shop
+                      for to form the looks you made above.
+                    </FormLabel>
 
                     <TableContainer pb={"10px"}>
                       <Table variant="striped" colorScheme={"gray"}>
@@ -481,9 +486,10 @@ function CreateLooks(props) {
                   </FormControl>
                   <FormControl id="look-price">
                     <FormLabel>
-                      Add Price in USD for the above products. Your customers
-                      will be able to buy all the products tagged in this
-                      curation by paying via XRP.
+                      Customers will be able to checkout and buy all of the
+                      products in this curation by paying in XRP.
+                      <br />
+                      Add one price in USD for all of the above products
                     </FormLabel>
                     <InputGroup>
                       <InputLeftAddon children="USD" />
@@ -507,9 +513,9 @@ function CreateLooks(props) {
                       </InputRightAddon>
                     </InputGroup>
                     <FormHelperText>
-                      The total number of XRP user has to pay to shop all of the
-                      above products in this look. Please add a discounted price
-                      to encourage community.
+                      The total number of XRP a customer has to pay to shop all
+                      of the above products in this curation. Please add a
+                      discounted price to encourage community.
                     </FormHelperText>
                   </FormControl>
                 </Stack>
@@ -522,7 +528,7 @@ function CreateLooks(props) {
                       variant="ghost"
                       colorScheme="red"
                     >
-                      Delete Look
+                      Delete Curation
                     </Button>
                   ) : null}
                   <Button

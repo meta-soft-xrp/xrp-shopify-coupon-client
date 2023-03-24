@@ -45,16 +45,22 @@ const useTransactionStore = create((set) => ({
     );
 
     try {
-      const {data} = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`
+      );
+      console.log("SHOP IS ", data);
       const walletAddress = data.walletAddress;
-  //  console.log(walletAddress);
-      const client = new window.xrpl.Client(`${process.env.REACT_APP_XRP_TRANSACTION_FETCH_UTL}`);
+      //  console.log(walletAddress);
+      const client = new window.xrpl.Client(
+        `${process.env.REACT_APP_XRP_TRANSACTION_FETCH_UTL}`
+      );
       await client.connect();
       const response = await client.request({
         command: "account_tx",
         account: walletAddress,
       });
 
+      console.log(response);
       set(
         produce((state) => ({
           ...state,
@@ -72,6 +78,7 @@ const useTransactionStore = create((set) => ({
       );
       return response;
     } catch (e) {
+      console.error(e);
       throw e;
     }
   },
