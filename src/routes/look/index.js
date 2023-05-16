@@ -159,7 +159,7 @@ function CreateLooks(props) {
       if (data) {
         setLooksName(data?.name);
         setUploads([...uploads, ...data?.medias]);
-        setLooksPrice([data?.price]);
+        setLooksPrice(data?.price);
         // console.log("asdf ", data.products);
         setProducts([
           ...products,
