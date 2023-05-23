@@ -451,10 +451,11 @@ function CreateLooks(props) {
                             <Tr>
                               <Td></Td>
                               <Td isNumeric fontWeight={"bold"}>
-                                Total Product Price
+                                Total Product Price{" "}
                               </Td>
                               <Td isNumeric>
                                 <Text size="14px" fontWeight={"bold"}>
+                                  {window.localStorage.getItem("baseCurrency")}{" "}
                                   {totalProductsPrice}
                                 </Text>
                               </Td>

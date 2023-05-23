@@ -39,8 +39,10 @@ function App() {
       embed,
       host = "",
       userToken,
+      baseCurrency = "USD",
     } = parseQuery(window.location.search);
     window.lookbook = parseQuery(window.location.search);
+    window.localStorage.setItem("baseCurrency", baseCurrency);
     if (session) {
       setShopifySessionAvailable(true);
       setShopifyHmacAvailable(false);
