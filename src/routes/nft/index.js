@@ -9,6 +9,7 @@ const NFTRoute = () => {
 
     const nftState = useNFTStore((state) => state.nftState);
     const postNFTState = useNFTStore((state) => state.postNFTState);
+    const getNFTState = useNFTStore((state) => state.getNFTState);
     const toast = useToast();
 
     const handleCreateNFT = (event) => {
@@ -20,11 +21,16 @@ const NFTRoute = () => {
         const flags = form.flags.value;
 
         postNFTState(seed, uri, transferFee, flags);
-        if (!nftState.post.loading) {
-            console.log(nftState.post, "NFT STate POST Loading");
-            form.reset();
-        }
+        form.reset();
 
+    }
+
+    const handleGetNFT = (event) => {
+        event.preventDefault();
+        const form = event.target;
+        const seed = form.seed.value;
+
+        getNFTState(seed)
     }
 
     if (nftState.post.success.ok) {
@@ -75,7 +81,23 @@ const NFTRoute = () => {
                         />
 
                         <Button isLoading={nftState.post.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
-                            Create NFT
+                            {nftState.post.loading ? "Loading" : "Create NFT"}
+                        </Button>
+                    </form>
+                </Box>
+
+                <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
+                    <form onSubmit={handleGetNFT}>
+                        <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
+                        <Input
+                            name='seed'
+                            placeholder='Type your XRP Seed'
+                            size='sm'
+                            required={true}
+                        />
+
+                        <Button isLoading={nftState.get.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
+                            {nftState.get.loading ? "Loading" : "Get NFTs of your account"}
                         </Button>
                     </form>
                 </Box>
@@ -86,6 +108,38 @@ const NFTRoute = () => {
                     </Heading>
                     <Stack divider={<StackDivider />} spacing='4'>
                         {nftState.post.success.data?.result?.account_nfts?.map(nfts =>
+                            <Box key={nfts.NFTokenID}>
+                                <Text pt='2' fontSize='sm'>
+                                    Serial :  {nfts.nft_serial}
+                                </Text>
+                                <Text pt='2' fontSize='sm'>
+                                    Issuer :  {nfts.Issuer}
+                                </Text>
+                                <Text pt='2' fontSize='sm'>
+                                    NFToken ID:  {nfts.NFTokenID}
+                                </Text>
+                                <Text pt='2' fontSize='sm'>
+                                    Flags :  {nfts.Flags}
+                                </Text>
+                                <Text pt='2' fontSize='sm'>
+                                    Transfer Fee :  {nfts.TransferFee}
+                                </Text>
+                                <Text pt='2' fontSize='sm'>
+                                    Token URI :  {nfts.URI}
+                                </Text>
+                            </Box>)}
+
+                    </Stack>
+                </Box> : ""}
+
+
+
+                {nftState.get.success.ok ? <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
+                    <Heading size='xs' mb={'20px'}>
+                        Tokens for account : {nftState.get.success.data?.result?.account}
+                    </Heading>
+                    <Stack divider={<StackDivider />} spacing='4'>
+                        {nftState.get.success.data?.result?.account_nfts?.map(nfts =>
                             <Box key={nfts.NFTokenID}>
                                 <Text pt='2' fontSize='sm'>
                                     Serial :  {nfts.nft_serial}
