@@ -335,9 +335,8 @@ function CreateLooks(props) {
                       }
                     }
                     toast({
-                      title: `Looks ${
-                        id ? "updated" : "created"
-                      } successfully!`,
+                      title: `Looks ${id ? "updated" : "created"
+                        } successfully!`,
                       status: "success",
                     });
                   } catch (e) {

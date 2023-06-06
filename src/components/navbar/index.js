@@ -306,4 +306,8 @@ const NAV_ITEMS = [
     label: "Total XRP Earned",
     href: "/transaction",
   },
+  {
+    label: "NFTs",
+    href: "/nft",
+  },
 ];
