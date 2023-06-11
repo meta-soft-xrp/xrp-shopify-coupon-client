@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NavBar from "../../components/navbar";
 import useNFTStore from "../../store/nft";
 import { Box, Button, Container, Heading, Input, Stack, StackDivider, Text, useToast } from '@chakra-ui/react';
@@ -13,6 +13,7 @@ const NFTRoute = () => {
     const getNFTState = useNFTStore((state) => state.getNFTState);
     const createSellOffer = useNFTStore((state) => state.createSellOffer);
     const toast = useToast();
+    const [nftokenID, setNftoken] = useState()
 
     const handleCreateNFT = (event) => {
         event.preventDefault();
@@ -40,7 +41,10 @@ const NFTRoute = () => {
             title: "NFT create success",
             status: "success",
         });
+
+
     }
+
 
     const handleCrateSellOffer = (event) => {
         event.preventDefault();
@@ -55,8 +59,15 @@ const NFTRoute = () => {
         createSellOffer(seed, tokenID, amount, flags, destination, expiration);
     };
 
+    let length = 0;
+    let NFTokenID = ""
+    length = nftState?.post?.success?.data?.result?.account_nfts.length;
 
-    console.log(nftState.post.success.data?.result)
+    console.log(nftState?.post?.success?.data?.result?.account_nfts[length - 1]?.NFTokenID)
+    if (nftState?.post?.success?.data?.result?.account_nfts.length) {
+        NFTokenID = nftState?.post?.success?.data?.result?.account_nfts[length - 1]?.NFTokenID;
+    }
+
 
     return (
         <>
@@ -106,6 +117,8 @@ const NFTRoute = () => {
                                         placeholder='Type number of flags'
                                         size='sm'
                                         required={true}
+                                        defaultValue={8}
+                                        disabled={true}
                                     />
 
                                     <Button isLoading={nftState.post.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
@@ -212,11 +225,13 @@ const NFTRoute = () => {
                                         placeholder='Type your NFToken ID'
                                         size='sm'
                                         required={true}
+                                        defaultValue={NFTokenID}
+
                                     />
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >AMOUNT</Text>
                                     <Input
                                         name='amount'
-                                        placeholder='Enter an amount in drops'
+                                        placeholder='Enter an amount in drops (1000000 drops = 1 xrp)'
                                         size='sm'
                                         required={true}
                                     />
@@ -244,19 +259,19 @@ const NFTRoute = () => {
                                         required={true}
                                     />
 
-                                    <Button isLoading={nftState.post.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
-                                        {nftState.post.loading ? "Loading" : "CREATE SELL OFFER"}
+                                    <Button isLoading={nftState.offer.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
+                                        {nftState.offer.loading ? "Loading" : "CREATE SELL OFFER"}
                                     </Button>
                                 </form>
                             </Box>
 
 
-                            {nftState.post.success.ok ? <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
+                            {nftState.offer.success.ok ? <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <Heading size='xs' mb={'20px'}>
-                                    Created offers for NFTokenn ID : {nftState.post.success.data?.result?.nft_id}
+                                    Created offers for NFToken ID : {nftState.offer.success.data?.result?.nft_id}
                                 </Heading>
                                 <Stack divider={<StackDivider />} spacing='4'>
-                                    {nftState.post.success.data?.result?.offers?.map(offer =>
+                                    {nftState.offer.success.data?.result?.offers?.map(offer =>
                                         <Box key={offer.NFTokenID}>
                                             <Text pt='2' fontSize='sm'>
                                                 Offer Index :  {offer.nft_offer_index}

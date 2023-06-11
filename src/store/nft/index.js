@@ -26,6 +26,17 @@ const INITIAL_NFT_STATE = {
             message: "",
         },
     },
+    offer: {
+        loading: false,
+        success: {
+            ok: false,
+            data: {},
+        },
+        failure: {
+            error: false,
+            message: "",
+        },
+    }
 
 };
 
@@ -138,8 +149,8 @@ const useNFTStore = create((set) => ({
                 ...state,
                 nftState: {
                     ...state.nftState,
-                    post: {
-                        ...INITIAL_NFT_STATE.get,
+                    offer: {
+                        ...INITIAL_NFT_STATE.offer,
                         loading: true,
                     },
                 },
@@ -163,8 +174,8 @@ const useNFTStore = create((set) => ({
                         ...state,
                         nftState: {
                             ...state.nftState,
-                            post: {
-                                ...INITIAL_NFT_STATE.post,
+                            offer: {
+                                ...INITIAL_NFT_STATE.offer,
                                 loading: false,
                                 success: {
                                     ok: true,
