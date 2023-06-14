@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import NavBar from "../../components/navbar";
 import useNFTStore from "../../store/nft";
 import { Box, Button, Container, Heading, Input, Stack, StackDivider, Text, useToast } from '@chakra-ui/react';
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+
 
 
 
@@ -13,12 +14,12 @@ const NFTRoute = () => {
     const getNFTState = useNFTStore((state) => state.getNFTState);
     const createSellOffer = useNFTStore((state) => state.createSellOffer);
     const toast = useToast();
-    const [nftokenID, setNftoken] = useState()
+
 
     const handleCreateNFT = (event) => {
         event.preventDefault();
         const form = event.target;
-        const seed = form.seed.value;
+        const seed = process.env.REACT_APP_XRP_NFT_ACCOUNT_SEED;
         const uri = form.uri.value;
         const transferFee = form.transferFee.value;
         const flags = form.flags.value;
@@ -28,28 +29,32 @@ const NFTRoute = () => {
 
     }
 
-    const handleGetNFT = (event) => {
-        event.preventDefault();
-        const form = event.target;
-        const seed = form.seed.value;
+    // const handleGetNFT = (event) => {
+    //     event.preventDefault();
+    //     const seed = process.env.REACT_APP_XRP_NFT_ACCOUNT_SEED;
 
-        getNFTState(seed)
-    }
+    //     getNFTState(seed)
+    // }
 
     if (nftState.post.success.ok) {
         toast({
-            title: "NFT create success",
+            title: "NFT created successfully",
             status: "success",
         });
+    }
 
-
+    if (nftState.offer.success.ok) {
+        toast({
+            title: "NFToken offer created successfully",
+            status: "success",
+        });
     }
 
 
     const handleCrateSellOffer = (event) => {
         event.preventDefault();
         const form = event.target;
-        const seed = form.seed.value;
+        const seed = process.env.REACT_APP_XRP_NFT_ACCOUNT_SEED;
         const tokenID = form.tokenID.value;
         const flags = form.flags.value;
         const expiration = form.expiration.value;
@@ -57,15 +62,19 @@ const NFTRoute = () => {
         const amount = form.amount.value;
 
         createSellOffer(seed, tokenID, amount, flags, destination, expiration);
+
+        form.reset();
     };
 
     let length = 0;
     let NFTokenID = ""
+    let token = ""
     length = nftState?.post?.success?.data?.result?.account_nfts.length;
 
-    console.log(nftState?.post?.success?.data?.result?.account_nfts[length - 1]?.NFTokenID)
+
     if (nftState?.post?.success?.data?.result?.account_nfts.length) {
         NFTokenID = nftState?.post?.success?.data?.result?.account_nfts[length - 1]?.NFTokenID;
+        token = nftState?.post?.success?.data?.result?.account_nfts[length - 1]
     }
 
 
@@ -90,19 +99,20 @@ const NFTRoute = () => {
                             <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <Text mb='4px' align={"center"} mt={'8px'} size="xl" fontWeight="bold" >CREATE NFTs</Text>
                                 <form onSubmit={handleCreateNFT}>
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
+                                    {/* <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
                                     <Input
                                         name='seed'
                                         placeholder='Type your XRP Seed'
                                         size='sm'
                                         required={true}
-                                    />
+                                    /> */}
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >TOKEN URI</Text>
                                     <Input
                                         name='uri'
                                         placeholder='Type your token URI'
                                         size='sm'
                                         required={true}
+                                        defaultValue={"ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf4dfuylqabf3oclgtqy55fbzdi"}
                                     />
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >TRANSFER FEE</Text>
                                     <Input
@@ -110,6 +120,7 @@ const NFTRoute = () => {
                                         placeholder='Enter a transfer fee'
                                         size='sm'
                                         required={true}
+                                        defaultValue={1}
                                     />
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >FLAGS</Text>
                                     <Input
@@ -127,7 +138,7 @@ const NFTRoute = () => {
                                 </form>
                             </Box>
 
-                            <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
+                            {/* <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <form onSubmit={handleGetNFT}>
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
                                     <Input
@@ -141,34 +152,34 @@ const NFTRoute = () => {
                                         {nftState.get.loading ? "Loading" : "Get NFTs of your account"}
                                     </Button>
                                 </form>
-                            </Box>
+                            </Box> */}
 
                             {nftState.post.success.ok ? <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <Heading size='xs' mb={'20px'}>
                                     Created tokens for account : {nftState.post.success.data?.result?.account}
                                 </Heading>
                                 <Stack divider={<StackDivider />} spacing='4'>
-                                    {nftState.post.success.data?.result?.account_nfts?.map(nfts =>
-                                        <Box key={nfts.NFTokenID}>
-                                            <Text pt='2' fontSize='sm'>
-                                                Serial :  {nfts.nft_serial}
-                                            </Text>
-                                            <Text pt='2' fontSize='sm'>
-                                                Issuer :  {nfts.Issuer}
-                                            </Text>
-                                            <Text pt='2' fontSize='sm'>
-                                                NFToken ID:  {nfts.NFTokenID}
-                                            </Text>
-                                            <Text pt='2' fontSize='sm'>
-                                                Flags :  {nfts.Flags}
-                                            </Text>
-                                            <Text pt='2' fontSize='sm'>
-                                                Transfer Fee :  {nfts.TransferFee}
-                                            </Text>
-                                            <Text pt='2' fontSize='sm'>
-                                                Token URI :  {nfts.URI}
-                                            </Text>
-                                        </Box>)}
+
+                                    <Box key={token.NFTokenID}>
+                                        <Text pt='2' fontSize='sm'>
+                                            Serial :  {token.nft_serial}
+                                        </Text>
+                                        <Text pt='2' fontSize='sm'>
+                                            Issuer :  {token.Issuer}
+                                        </Text>
+                                        <Text pt='2' fontSize='sm'>
+                                            NFToken ID:  {token.NFTokenID}
+                                        </Text>
+                                        <Text pt='2' fontSize='sm'>
+                                            Flags :  {token.Flags}
+                                        </Text>
+                                        <Text pt='2' fontSize='sm'>
+                                            Transfer Fee :  {token.TransferFee}
+                                        </Text>
+                                        <Text pt='2' fontSize='sm'>
+                                            Token URI :  {token.URI}
+                                        </Text>
+                                    </Box>
 
                                 </Stack>
                             </Box> : ""}
@@ -212,13 +223,13 @@ const NFTRoute = () => {
                             <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <Text mb='4px' align={"center"} mt={'8px'} size="xl" fontWeight="bold" >CREATE A SELL OFFER</Text>
                                 <form onSubmit={handleCrateSellOffer}>
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
+                                    {/* <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
                                     <Input
                                         name='seed'
                                         placeholder='Type your XRP Seed'
                                         size='sm'
                                         required={true}
-                                    />
+                                    /> */}
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >NFT TOKEN ID</Text>
                                     <Input
                                         name='tokenID'
@@ -234,6 +245,7 @@ const NFTRoute = () => {
                                         placeholder='Enter an amount in drops (1000000 drops = 1 xrp)'
                                         size='sm'
                                         required={true}
+                                        defaultValue={0}
                                     />
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >FLAGS</Text>
                                     <Input
@@ -254,7 +266,7 @@ const NFTRoute = () => {
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >DESTINATION</Text>
                                     <Input
                                         name='destination'
-                                        placeholder='Type number of expiration days'
+                                        placeholder='Type the destination account '
                                         size='sm'
                                         required={true}
                                     />
@@ -267,20 +279,23 @@ const NFTRoute = () => {
 
 
                             {nftState.offer.success.ok ? <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
-                                <Heading size='xs' mb={'20px'}>
+                                <Heading size='xs' mb={'20px'} fontWeight={"semibold"}>
                                     Created offers for NFToken ID : {nftState.offer.success.data?.result?.nft_id}
                                 </Heading>
                                 <Stack divider={<StackDivider />} spacing='4'>
                                     {nftState.offer.success.data?.result?.offers?.map(offer =>
                                         <Box key={offer.NFTokenID}>
                                             <Text pt='2' fontSize='sm'>
-                                                Offer Index :  {offer.nft_offer_index}
+                                                Offer Index :  <Text as={'span'} textColor={"green.600"} fontWeight={"bold"}>{offer.nft_offer_index}</Text>
                                             </Text>
                                             <Text pt='2' fontSize='sm'>
                                                 Owner :  {offer.owner}
                                             </Text>
                                             <Text pt='2' fontSize='sm'>
                                                 Amount:  {offer.amount}
+                                            </Text>
+                                            <Text pt='2' fontSize='sm'>
+                                                Destination:  {offer.destination}
                                             </Text>
 
                                         </Box>)}
@@ -292,6 +307,7 @@ const NFTRoute = () => {
                 </Tabs>
 
             </Container>
+
         </>
     );
 };

@@ -153,6 +153,14 @@ const useNFTStore = create((set) => ({
                         ...INITIAL_NFT_STATE.offer,
                         loading: true,
                     },
+                    post: {
+                        ...INITIAL_NFT_STATE.post,
+                        loading: false,
+                        success: {
+                            ok: false,
+                            data: {},
+                        },
+                    }
                 },
             }))
         );
