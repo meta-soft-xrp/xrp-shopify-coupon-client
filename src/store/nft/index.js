@@ -143,6 +143,8 @@ const useNFTStore = create((set) => ({
             throw e;
         }
     },
+    postNFTBadge: async (title, description, image) => { },
+
     createSellOffer: async (seed, tokenID, amount, flags, destination, expiration) => {
         set(
             produce((state) => ({

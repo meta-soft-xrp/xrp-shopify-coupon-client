@@ -2,7 +2,7 @@ import React from 'react';
 import NavBar from "../../components/navbar";
 import useNFTStore from "../../store/nft";
 import { Box, Button, Container, Heading, Input, Stack, StackDivider, Text, useToast } from '@chakra-ui/react';
-import { Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Textarea } from '@chakra-ui/react'
 
 
 
@@ -11,18 +11,36 @@ const NFTRoute = () => {
 
     const nftState = useNFTStore((state) => state.nftState);
     const postNFTState = useNFTStore((state) => state.postNFTState);
-    const getNFTState = useNFTStore((state) => state.getNFTState);
+    const postNFTBadge = useNFTStore((state) => state.postNFTBadge);
     const createSellOffer = useNFTStore((state) => state.createSellOffer);
     const toast = useToast();
+    const imageHostKey = process.env.REACT_APP_IMAGE_BB_KEY
 
 
     const handleCreateNFT = (event) => {
         event.preventDefault();
         const form = event.target;
         const seed = process.env.REACT_APP_XRP_NFT_ACCOUNT_SEED;
-        const uri = form.uri.value;
-        const transferFee = form.transferFee.value;
-        const flags = form.flags.value;
+        const uri = "ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf4dfuylqabf3oclgtqy55fbzdi";
+        const transferFee = 1;
+        const flags = 8;
+        const title = form.title.value;
+        const description = form.description.value;
+        const image = form.image.files[0];
+        const formData = new FormData();
+        formData.append('image', image);
+        const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
+
+        // fetch(url, {
+        //     method: 'POST',
+        //     body: formData
+        // })
+        //     .then(res => res.json())
+        //     .then(imgData => {
+        //         console.log("Image URL", imgData.data.url);
+
+        //         postNFTBadge(title, description, imgData.data.url)
+        //     })
 
         postNFTState(seed, uri, transferFee, flags);
         form.reset();
@@ -99,37 +117,24 @@ const NFTRoute = () => {
                             <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <Text mb='4px' align={"center"} mt={'8px'} size="xl" fontWeight="bold" >CREATE NFTs</Text>
                                 <form onSubmit={handleCreateNFT}>
-                                    {/* <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
+
+                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >Title of your NFT badge</Text>
                                     <Input
-                                        name='seed'
-                                        placeholder='Type your XRP Seed'
+                                        name='title'
+                                        placeholder='Title of your NFT badge'
                                         size='sm'
                                         required={true}
-                                    /> */}
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >TOKEN URI</Text>
-                                    <Input
-                                        name='uri'
-                                        placeholder='Type your token URI'
-                                        size='sm'
-                                        required={true}
-                                        defaultValue={"ipfs://bafybeigdyrzt5sfp7udm7hu76uh7y26nf4dfuylqabf3oclgtqy55fbzdi"}
                                     />
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >TRANSFER FEE</Text>
+                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >Description</Text>
+                                    <Textarea name="description" placeholder='Description of your NFT badge' />
+                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >Image</Text>
                                     <Input
-                                        name='transferFee'
-                                        placeholder='Enter a transfer fee'
+                                        type='file'
+                                        px='4'
+                                        name='image'
+                                        placeholder='Title of your NFT badge'
                                         size='sm'
                                         required={true}
-                                        defaultValue={1}
-                                    />
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >FLAGS</Text>
-                                    <Input
-                                        name='flags'
-                                        placeholder='Type number of flags'
-                                        size='sm'
-                                        required={true}
-                                        defaultValue={8}
-                                        disabled={true}
                                     />
 
                                     <Button isLoading={nftState.post.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
@@ -138,21 +143,6 @@ const NFTRoute = () => {
                                 </form>
                             </Box>
 
-                            {/* <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
-                                <form onSubmit={handleGetNFT}>
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >XRP ACCOUNT SEED</Text>
-                                    <Input
-                                        name='seed'
-                                        placeholder='Type your XRP Seed'
-                                        size='sm'
-                                        required={true}
-                                    />
-
-                                    <Button isLoading={nftState.get.loading} type='submit' colorScheme={"messenger"} variant='solid' mt={'10px'}>
-                                        {nftState.get.loading ? "Loading" : "Get NFTs of your account"}
-                                    </Button>
-                                </form>
-                            </Box> */}
 
                             {nftState.post.success.ok ? <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
                                 <Heading size='xs' mb={'20px'}>
