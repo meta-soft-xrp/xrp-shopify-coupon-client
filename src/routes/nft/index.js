@@ -297,9 +297,10 @@ const NFTRoute = () => {
                                             <Text pt='2' fontSize='sm'>
                                                 Destination:  {offer.destination}
                                             </Text>
-
                                         </Box>)}
-
+                                    <Text fontStyle={"italic"} as='u' cursor={'pointer'}>
+                                        <a href={nftState.offer.success.data?.payload?.next?.always} target='_blank' rel="noreferrer">Offer Accept QR </a>
+                                    </Text>
                                 </Stack>
                             </Box> : ""}
                         </TabPanel>
