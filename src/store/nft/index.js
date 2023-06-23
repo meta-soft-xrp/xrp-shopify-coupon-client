@@ -36,6 +36,17 @@ const INITIAL_NFT_STATE = {
             error: false,
             message: "",
         },
+    },
+    badge: {
+        loading: false,
+        success: {
+            ok: false,
+            data: {},
+        },
+        failure: {
+            error: false,
+            message: "",
+        },
     }
 
 };
@@ -102,7 +113,7 @@ const useNFTStore = create((set) => ({
                     post: {
                         ...INITIAL_NFT_STATE.get,
                         loading: true,
-                    },
+                    }
                 },
             }))
         );
@@ -143,7 +154,54 @@ const useNFTStore = create((set) => ({
             throw e;
         }
     },
-    postNFTBadge: async (title, description, image) => { },
+    postNFTBadge: async (title, description, image) => {
+        set(
+            produce((state) => ({
+                ...state,
+                nftState: {
+                    ...state.nftState,
+                    badge: {
+                        ...INITIAL_NFT_STATE.badge,
+                        loading: true,
+                    },
+                },
+            }))
+        );
+
+        try {
+            const body = {
+                title: title,
+                description: description,
+                image: image
+            };
+
+            const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/badge_nft`, body)
+
+            if (data?.objectId) {
+                set(
+                    produce((state) => ({
+                        ...state,
+                        nftState: {
+                            ...state.nftState,
+                            badge: {
+                                ...INITIAL_NFT_STATE.badge,
+                                loading: false,
+                                success: {
+                                    ok: true,
+                                    data: data,
+                                },
+                            },
+                        },
+                    }))
+                );
+            }
+
+            ;
+        } catch (e) {
+            console.error(e);
+            throw e;
+        }
+    },
 
     createSellOffer: async (seed, tokenID, amount, flags, destination, expiration) => {
         set(
