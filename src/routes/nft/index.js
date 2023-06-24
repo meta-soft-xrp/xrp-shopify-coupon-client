@@ -66,13 +66,6 @@ const NFTRoute = () => {
         });
     }
 
-    // if (nftState.badge.success.ok) {
-    //     toast({
-    //         title: "Badge created successfully",
-    //         status: "success",
-    //     });
-    //     console.log(nftState.badge, "success");
-    // }
 
     let length = 0;
     let NFTokenID = ""
@@ -122,7 +115,7 @@ const NFTRoute = () => {
                     <TabPanels>
                         <TabPanel>
                             <Box bg="white" maxW="5xl" mx="auto" borderRadius={10} p={5} mt={'24px'} boxShadow="md">
-                                <Text mb='4px' align={"center"} mt={'8px'} size="4xl" fontWeight="bold" >Create Discount Badges/NFT and send them to your customers for bonus </Text>
+                                <Text mb='8px' align={"center"} fontSize={"2xl"} mt={'8px'} fontWeight="bold" textColor={'orange.400'} >Create Discount Badges/NFT and send them to your customers for bonus </Text>
 
                                 <Text my='14px'>
                                     Just follow three simple steps...
@@ -140,7 +133,7 @@ const NFTRoute = () => {
 
 
 
-                                <Flex justifyContent={"space-between"} alignItems={"center"}>
+                                <Flex justifyContent={"space-between"} alignItems={"center"} mt='24px'>
                                     <Box width={"50%"}>
                                         <form onSubmit={handleCreateBadge}>
 
@@ -307,14 +300,14 @@ const NFTRoute = () => {
                                         disabled={true}
                                     /> */}
 
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >AMOUNT</Text>
+                                    {/* <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >AMOUNT</Text>
                                     <Input
                                         name='amount'
                                         placeholder='Enter an amount in drops (1000000 drops = 1 xrp)'
                                         size='sm'
                                         required={true}
                                         defaultValue={0}
-                                    />
+                                    /> */}
 
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >EXPIRATION</Text>
                                     <Input
