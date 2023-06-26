@@ -84,11 +84,10 @@ const NFTRoute = () => {
         const seed = process.env.REACT_APP_XRP_NFT_ACCOUNT_SEED;
         const tokenID = NFTokenID;
         const flags = 1;
-        const expiration = form.expiration.value;
         const destination = form.destination.value;
         const amount = "0";
 
-        createSellOffer(seed, tokenID, amount, flags, destination, expiration);
+        createSellOffer(seed, tokenID, amount, flags, destination);
 
         form.reset();
     };
@@ -260,6 +259,9 @@ const NFTRoute = () => {
 
                                 {nftState.post.success.ok ?
                                     <Box width={"100%"}>
+
+                                        <Text mb='8px' align={"center"} fontSize={"2xl"} mt={'8px'} fontWeight="bold" textColor={'orange.400'} >Send your created NFT badge to your desired customer </Text>
+
                                         <Heading fontSize={'large'} textAlign={'center'} my='16px'>Your Created Badge</Heading>
                                         <Center >
                                             <Image
@@ -309,13 +311,13 @@ const NFTRoute = () => {
                                         defaultValue={0}
                                     /> */}
 
-                                    <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >EXPIRATION</Text>
+                                    {/* <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >EXPIRATION</Text>
                                     <Input
                                         name='expiration'
                                         placeholder='Type number of expiration days'
                                         size='sm'
                                         required={true}
-                                    />
+                                    /> */}
                                     <Text mb='4px' mt={'8px'} size="xl" fontWeight="bold" >DESTINATION</Text>
                                     <Input
                                         name='destination'

@@ -203,7 +203,7 @@ const useNFTStore = create((set) => ({
         }
     },
 
-    createSellOffer: async (seed, tokenID, amount, flags, destination, expiration) => {
+    createSellOffer: async (seed, tokenID, amount, flags, destination) => {
         set(
             produce((state) => ({
                 ...state,
@@ -231,7 +231,6 @@ const useNFTStore = create((set) => ({
                 amount: amount,
                 flags: flags,
                 destination: destination,
-                expiration: expiration
             };
 
             const { data } = await axios.post(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/transfer_nft`, body)
