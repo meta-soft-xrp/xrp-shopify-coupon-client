@@ -88,6 +88,7 @@ const SettingsRoute = () => {
     getWalletAddress(shop);
     getScripts(shop);
   }, []);
+
   useEffect(() => {
     formik.setFieldValue(
       "walletAddress",
@@ -110,6 +111,7 @@ const SettingsRoute = () => {
       });
     }
   };
+
   const XrpAddressInput = () => {
     if (xrpWalletAddress.get.loading) {
       return (

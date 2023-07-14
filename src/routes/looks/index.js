@@ -177,7 +177,8 @@ export const renderLooks = ({ looks, orangeColorMode, getLooks }) => {
       </Box>
     );
   } else if (looks.get.success.data.length) {
-    return looks.get.success.data.map((look) => (
+    console.log(looks.get.success.data, "ERROR")
+    return looks.get?.success?.data?.map((look) => (
       <Box key={look.objectId}>
         <Box
           marginTop={{ base: "1", sm: "5" }}
@@ -295,7 +296,7 @@ function Looks(props) {
       } else {
         postViews({ shop, subscribed: false });
       }
-    } catch (e) {}
+    } catch (e) { }
   };
   useEffect(async () => {
     getLooks();

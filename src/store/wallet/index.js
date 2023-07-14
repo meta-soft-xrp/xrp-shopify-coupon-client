@@ -46,7 +46,8 @@ const useWalletStore = create((set, address) => ({
     );
 
     try {
-      const {data} = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`);
       // console.log(data);
       set(
         produce((state) => ({

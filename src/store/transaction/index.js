@@ -45,12 +45,10 @@ const useTransactionStore = create((set) => ({
     );
 
     try {
-      const { data } = await axios.get(
-        `${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`
+      const { data } = await axios.get(`${process.env.REACT_APP_API_SHOPLOOKS_SERVER_URL}/api/get_shop?shop=${shop}`
       );
-      console.log("SHOP IS ", data);
       const walletAddress = data.walletAddress;
-      //  console.log(walletAddress);
+
       const client = new window.xrpl.Client(
         `${process.env.REACT_APP_XRP_TRANSACTION_FETCH_UTL}`
       );

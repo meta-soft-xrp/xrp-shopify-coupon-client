@@ -33,6 +33,8 @@ const TransactionRoute = () => {
     getTransactionState(shop);
   }, []);
 
+  console.log(transactionState.get.success.data?.result?.transactions, "transactions")
+
   if (transactionState.get.success.data.length === 0) {
     return (
       <>
@@ -69,12 +71,13 @@ const TransactionRoute = () => {
                 <Divider borderColor="gray.200" />
               </Box>
             </VStack>
+
             <TableContainer p="5">
               <Table variant={"simple"}>
                 <Thead>
                   <Tr>
                     <Th>Account</Th>
-                    <Th isNumeric>Amount</Th>
+                    {/* <Th isNumeric>Amount</Th> */}
                     <Th>Ledger Index</Th>
                     <Th>Fee</Th>
                     <Th>Transaction Ref</Th>
@@ -86,9 +89,12 @@ const TransactionRoute = () => {
                       // <Text>{details.tx.Account}</Text>
                       <Tr>
                         <Td>{details.tx.Account}</Td>
-                        <Td isNumeric>
+
+                        {/* --------- There is no amount field i tx----------------- */}
+
+                        {/* <Td isNumeric>
                           {window.xrpl.dropsToXrp(details.tx.Amount)}
-                        </Td>
+                        </Td> */}
                         <Td>{details.tx.inLedger}</Td>
                         <Td>{details.tx.Fee}</Td>
                         <Td>
